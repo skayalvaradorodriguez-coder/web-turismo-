@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular';
+import { API_URL } from '@app/core/config/api.config';
 
 @Component({
   selector: 'app-home',
@@ -8,5 +9,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent],
 })
 export class HomePage {
-  constructor() {}
+  constructor() {
+    console.log('API_URL =', API_URL);
+  }
 }
