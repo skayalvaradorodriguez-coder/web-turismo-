@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular';
-import { API_URL } from '@app/core/config/api.config';
+import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,14 @@ import { API_URL } from '@app/core/config/api.config';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent],
 })
 export class HomePage {
-  constructor() {
-    console.log('API_URL =', API_URL);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly usuario = this.auth.usuario;
+
+  cerrarSesion(): void {
+    this.auth.logout().subscribe(() => {
+      void this.router.navigateByUrl('/login', { replaceUrl: true });
+    });
   }
 }
