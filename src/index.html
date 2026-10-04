@@ -3,7 +3,21 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Web Turismo</title>
+  <title>Observatorio Turístico Sostenible</title>
+
+  <!-- Aplica el tema (claro/oscuro) antes de pintar, para evitar un parpadeo -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ots-theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        if (t === 'dark') document.documentElement.classList.add('ion-palette-dark');
+      } catch (e) { }
+    })();
+  </script>
 
   <base href="/" />
 

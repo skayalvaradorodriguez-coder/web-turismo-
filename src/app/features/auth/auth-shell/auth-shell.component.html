@@ -1,0 +1,150 @@
+<ion-content class="auth-content" [fullscreen]="true">
+    <div class="auth">
+        <aside class="auth__brand">
+            <!-- Ilustración decorativa: curvas de nivel en todo el panel -->
+            <div class="brand__lines" aria-hidden="true">
+                <svg viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="ots-fade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#fff" stop-opacity="1" />
+                            <stop offset="0.7" stop-color="#fff" stop-opacity="0.55" />
+                            <stop offset="1" stop-color="#fff" stop-opacity="0" />
+                        </linearGradient>
+                        <mask id="ots-mask">
+                            <rect width="800" height="1000" fill="url(#ots-fade)" />
+                        </mask>
+                    </defs>
+                    <g mask="url(#ots-mask)" fill="none" stroke="#50d2c8" stroke-opacity="0.16" stroke-width="1.2">
+                        <path d="M-60 30 C140 -60 320 100 500 20 S800 -40 880 10" />
+                        <path d="M-60 84 C140 -6 320 154 500 74 S800 14 880 64" />
+                        <path d="M-60 138 C140 48 320 208 500 128 S800 68 880 118" />
+                        <path d="M-60 192 C140 102 320 262 500 182 S800 122 880 172" />
+                        <path d="M-60 246 C140 156 320 316 500 236 S800 176 880 226" />
+                        <path d="M-60 300 C140 210 320 370 500 290 S800 230 880 280" />
+                        <path d="M-60 354 C140 264 320 424 500 344 S800 284 880 334" />
+                        <path d="M-60 408 C140 318 320 478 500 398 S800 338 880 388" />
+                        <path d="M-60 462 C140 372 320 532 500 452 S800 392 880 442" />
+                        <path d="M-60 516 C140 426 320 586 500 506 S800 446 880 496" />
+                        <path d="M-60 570 C140 480 320 640 500 560 S800 500 880 550" />
+                        <path d="M-60 624 C140 534 320 694 500 614 S800 554 880 604" />
+                        <path d="M-60 678 C140 588 320 748 500 668 S800 608 880 658" />
+                        <path d="M-60 732 C140 642 320 802 500 722 S800 662 880 712" />
+                        <path d="M-60 786 C140 696 320 856 500 776 S800 716 880 766" />
+                        <path d="M-60 840 C140 750 320 910 500 830 S800 770 880 820" />
+                        <path d="M-60 894 C140 804 320 964 500 884 S800 824 880 874" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Ilustración decorativa: sol, velero y olas (franja inferior) -->
+            <div class="brand__art" aria-hidden="true">
+                <svg viewBox="0 0 800 330" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="ots-sun" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#ffd45c" stop-opacity="0.9" />
+                            <stop offset="45%" stop-color="#e8b009" stop-opacity="0.42" />
+                            <stop offset="100%" stop-color="#cc8a00" stop-opacity="0" />
+                        </radialGradient>
+                        <linearGradient id="ots-core" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ffe08a" />
+                            <stop offset="100%" stop-color="#e8b009" />
+                        </linearGradient>
+                        <linearGradient id="ots-sea-1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#50d2c8" stop-opacity="0.34" />
+                            <stop offset="100%" stop-color="#50d2c8" stop-opacity="0.04" />
+                        </linearGradient>
+                        <linearGradient id="ots-sea-2" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#1aa59a" stop-opacity="0.62" />
+                            <stop offset="100%" stop-color="#0d7570" stop-opacity="0.2" />
+                        </linearGradient>
+                        <linearGradient id="ots-sea-3" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#0b3a39" stop-opacity="0.9" />
+                            <stop offset="100%" stop-color="#071b1b" stop-opacity="0.95" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- sol -->
+                    <g class="art-sun">
+                        <circle cx="590" cy="226" r="140" fill="url(#ots-sun)" />
+                        <circle cx="590" cy="226" r="48" fill="url(#ots-core)" />
+                    </g>
+
+                    <!-- velero -->
+                    <g class="art-boat">
+                        <path d="M236 232 V190 L262 232 Z" fill="#fff" fill-opacity="0.95" />
+                        <path d="M230 232 V198 L208 232 Z" fill="#fff" fill-opacity="0.7" />
+                        <path d="M202 234 H268 L258 244 H212 Z" fill="#fff" fill-opacity="0.9" />
+                    </g>
+
+                    <!-- olas -->
+                    <g class="art-wave art-wave--2">
+                        <path d="M0 246 q100 -26 200 0 t200 0 t200 0 t200 0 t200 0 t200 0 V330 H0 Z"
+                            fill="url(#ots-sea-1)" />
+                    </g>
+                    <g class="art-wave">
+                        <path d="M0 276 q100 -22 200 0 t200 0 t200 0 t200 0 t200 0 t200 0 V330 H0 Z"
+                            fill="url(#ots-sea-2)" />
+                        <path d="M0 276 q100 -22 200 0 t200 0 t200 0 t200 0 t200 0 t200 0" fill="none" stroke="#fff"
+                            stroke-opacity="0.22" stroke-width="1.4" />
+                    </g>
+                    <g class="art-wave art-wave--3">
+                        <path d="M0 308 q100 -18 200 0 t200 0 t200 0 t200 0 t200 0 t200 0 V330 H0 Z"
+                            fill="url(#ots-sea-3)" />
+                        <path d="M0 308 q100 -18 200 0 t200 0 t200 0 t200 0 t200 0 t200 0" fill="none" stroke="#50d2c8"
+                            stroke-opacity="0.35" stroke-width="1.2" />
+                    </g>
+                </svg>
+            </div>
+
+            <div class="brand__plate reveal" style="--i: 0">
+                <img src="assets/brand/ots-logo.png" width="382" height="51"
+                    alt="OTS, Observatorio Turístico Sostenible, UPSE" />
+            </div>
+
+            <div class="brand__body">
+                <p class="brand__eyebrow reveal" style="--i: 1">Península de Santa Elena</p>
+                <h2 class="brand__title reveal" style="--i: 2">Turismo que se <em>entiende</em>,<br />se mide y se
+                    cuida.</h2>
+                <p class="brand__lead reveal" style="--i: 3">
+                    Plataforma del Observatorio Turístico Sostenible para integrar, consultar y visualizar la
+                    información turística del territorio.
+                </p>
+
+                <ul class="brand__feats reveal" style="--i: 4">
+                    <li class="feat">
+                        <span class="feat__ic"><app-icon name="database" [size]="18" /></span>
+                        <div class="feat__v">Fuentes de datos</div>
+                        <div class="feat__d">Integradas en un solo lugar</div>
+                    </li>
+                    <li class="feat">
+                        <span class="feat__ic"><app-icon name="chart" [size]="18" /></span>
+                        <div class="feat__v">Indicadores</div>
+                        <div class="feat__d">Medición del turismo</div>
+                    </li>
+                    <li class="feat">
+                        <span class="feat__ic"><app-icon name="pin" [size]="18" /></span>
+                        <div class="feat__v">Territorio</div>
+                        <div class="feat__d">Visión geo‑turística</div>
+                    </li>
+                </ul>
+            </div>
+
+            <p class="brand__foot">UPSE · Santa Elena, Ecuador</p>
+        </aside>
+
+        <main class="auth__main">
+            <div class="auth__top">
+                <span>Portal institucional</span>
+                <app-theme-toggle />
+            </div>
+
+            <div class="auth__center">
+                <section class="auth-card">
+                    <router-outlet />
+                </section>
+            </div>
+
+            <p class="auth__legal">© {{ anio }} Observatorio Turístico Sostenible · UPSE</p>
+        </main>
+    </div>
+</ion-content>

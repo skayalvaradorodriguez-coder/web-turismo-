@@ -1,17 +1,17 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '@app/core/services/auth.service';
+import { FieldComponent } from '@app/shared/components/field/field.component';
+import { IconComponent } from '@app/shared/components/icon/icon.component';
 import { mensajeDeError } from '@app/shared/utils/api-error';
 import { destinoSeguro } from '@app/shared/utils/safe-url';
 
 @Component({
     selector: 'app-login',
     templateUrl: 'login.page.html',
-    styleUrls: ['login.page.scss'],
-    imports: [ReactiveFormsModule, IonContent],
+    imports: [ReactiveFormsModule, RouterLink, FieldComponent, IconComponent],
 })
 export class LoginPage {
     private readonly fb = inject(NonNullableFormBuilder);
@@ -26,15 +26,11 @@ export class LoginPage {
 
     readonly cargando = signal(false);
     readonly error = signal<string | null>(null);
-    readonly intentado = signal(false);
 
-    mostrarError(campo: 'email' | 'password'): boolean {
-        const control = this.form.controls[campo];
-        return control.invalid && (control.touched || this.intentado());
-    }
+    // Se activa en la Etapa 9 (inicio de sesion con Google)
+    readonly googleHabilitado = false;
 
     enviar(): void {
-        this.intentado.set(true);
         this.error.set(null);
 
         if (this.form.invalid) {
@@ -52,7 +48,6 @@ export class LoginPage {
                 next: () => {
                     // La pagina queda en memoria detras de la siguiente: no dejar la contrasena escrita
                     this.form.reset();
-                    this.intentado.set(false);
                     void this.router.navigateByUrl(destinoSeguro(this.route.snapshot.queryParamMap.get('returnUrl')));
                 },
                 error: (error: unknown) => {
