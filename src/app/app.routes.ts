@@ -29,8 +29,14 @@ export const routes: Routes = [
       {
         path: 'recuperar',
         title: `Recuperar contraseña · ${MARCA}`,
-        data: { titulo: 'Recuperar contraseña' },
-        loadComponent: () => import('./features/auth/proximamente/proximamente.page').then((m) => m.ProximamentePage),
+        loadComponent: () =>
+          import('./features/auth/forgot-password/forgot-password.page').then((m) => m.ForgotPasswordPage),
+      },
+      {
+        path: 'restablecer',
+        title: `Contraseña nueva · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/auth/reset-password/reset-password.page').then((m) => m.ResetPasswordPage),
       },
     ],
   },

@@ -43,6 +43,20 @@ export class AuthService {
         return this.http.post<unknown>(`${API_URL}/auth/reenviar-verificacion`, { email }).pipe(map(() => undefined));
     }
 
+    /** Pide el correo de recuperacion. La API responde igual exista o no la cuenta. */
+    solicitarRecuperacion(email: string): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/recuperar`, { email }).pipe(map(() => undefined));
+    }
+
+    /** Comprueba que el enlace del correo siga vigente, sin gastarlo. */
+    validarRecuperacion(token: string): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/validar-recuperacion`, { token }).pipe(map(() => undefined));
+    }
+
+    restablecerPassword(token: string, password: string): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/restablecer`, { token, password }).pipe(map(() => undefined));
+    }
+
     /** Cierra la sesion en la API y SIEMPRE limpia la sesion local, aunque la API falle. */
     logout(): Observable<void> {
         return this.http.post<unknown>(`${API_URL}/auth/logout`, {}).pipe(

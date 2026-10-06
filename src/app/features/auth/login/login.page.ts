@@ -29,6 +29,9 @@ export class LoginPage {
     readonly sinVerificar = signal(false);
     readonly reenvio = signal<'reposo' | 'enviando' | 'enviado'>('reposo');
 
+    // Llega desde la pantalla de "contraseña nueva" (/login?restablecida=1)
+    readonly restablecida = this.route.snapshot.queryParamMap.get('restablecida') === '1';
+
     // Se activa en la Etapa 9 (inicio de sesion con Google)
     readonly googleHabilitado = false;
 

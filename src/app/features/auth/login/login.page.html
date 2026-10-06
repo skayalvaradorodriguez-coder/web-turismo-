@@ -2,6 +2,13 @@
 <h1 class="ui-title">Bienvenido de nuevo</h1>
 <p class="ui-sub">Ingresa para consultar y gestionar la información turística del territorio.</p>
 
+@if (restablecida) {
+<div class="alert alert--ok" role="status" style="margin-bottom: 18px">
+  <app-icon name="check" [size]="18" />
+  <span>Tu contraseña se actualizó. Inicia sesión con la nueva.</span>
+</div>
+}
+
 <button type="button" class="btn btn--outline" [disabled]="!googleHabilitado">
   <app-icon name="google" [size]="20" />
   <span>Continuar con Google</span>
