@@ -9,13 +9,13 @@
 </div>
 }
 
-<button type="button" class="btn btn--outline" [disabled]="!googleHabilitado">
-  <app-icon name="google" [size]="20" />
-  <span>Continuar con Google</span>
-  @if (!googleHabilitado) {
-  <span class="btn__tag">Pronto</span>
-  }
-</button>
+<app-google-button (iniciado)="alIniciarConGoogle()" (fallo)="errorGoogle.set($event)" />
+@if (errorGoogle()) {
+<div class="alert" role="alert" style="margin-top: 14px">
+  <app-icon name="alert" [size]="18" />
+  <span>{{ errorGoogle() }}</span>
+</div>
+}
 
 <div class="divider" role="separator"><span>o con tu correo</span></div>
 

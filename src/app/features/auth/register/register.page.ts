@@ -1,10 +1,11 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '@app/core/services/auth.service';
 import { FieldComponent } from '@app/shared/components/field/field.component';
+import { GoogleButtonComponent } from '@app/shared/components/google-button/google-button.component';
 import { IconComponent } from '@app/shared/components/icon/icon.component';
 import { PasswordChecklistComponent } from '@app/shared/components/password-checklist/password-checklist.component';
 import { mensajeDeError } from '@app/shared/utils/api-error';
@@ -17,12 +18,13 @@ const PATRON_NOMBRE = /^\p{L}[\p{L}\s'.-]*$/u;
 @Component({
     selector: 'app-register',
     templateUrl: 'register.page.html',
-    imports: [ReactiveFormsModule, RouterLink, FieldComponent, IconComponent, PasswordChecklistComponent],
+    imports: [ReactiveFormsModule, RouterLink, FieldComponent, IconComponent, PasswordChecklistComponent, GoogleButtonComponent],
 })
 export class RegisterPage {
     private readonly fb = inject(NonNullableFormBuilder);
     private readonly auth = inject(AuthService);
     private readonly destroyRef = inject(DestroyRef);
+    private readonly router = inject(Router);
 
     readonly form = this.fb.group({
         nombres: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(PATRON_NOMBRE)]],
@@ -37,6 +39,7 @@ export class RegisterPage {
     readonly cargando = signal(false);
     readonly error = signal<string | null>(null);
     readonly correoEnviado = signal<string | null>(null);
+    readonly errorGoogle = signal<string | null>(null);
 
     readonly espera = signal(0);
     readonly reenviando = signal(false);
@@ -45,6 +48,12 @@ export class RegisterPage {
 
     constructor() {
         this.destroyRef.onDestroy(() => clearInterval(this.temporizador));
+    }
+
+    /** Con Google la cuenta se crea y la sesion se abre en un solo paso (no hace falta verificar el correo). */
+    alIniciarConGoogle(): void {
+        this.errorGoogle.set(null);
+        void this.router.navigateByUrl('/home');
     }
 
     enviar(): void {

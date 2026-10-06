@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '@app/core/services/auth.service';
 import { FieldComponent } from '@app/shared/components/field/field.component';
+import { GoogleButtonComponent } from '@app/shared/components/google-button/google-button.component';
 import { IconComponent } from '@app/shared/components/icon/icon.component';
 import { codigoDeError, mensajeDeError } from '@app/shared/utils/api-error';
 import { destinoSeguro } from '@app/shared/utils/safe-url';
@@ -11,7 +12,7 @@ import { destinoSeguro } from '@app/shared/utils/safe-url';
 @Component({
     selector: 'app-login',
     templateUrl: 'login.page.html',
-    imports: [ReactiveFormsModule, RouterLink, FieldComponent, IconComponent],
+    imports: [ReactiveFormsModule, RouterLink, FieldComponent, IconComponent, GoogleButtonComponent],
 })
 export class LoginPage {
     private readonly fb = inject(NonNullableFormBuilder);
@@ -32,8 +33,7 @@ export class LoginPage {
     // Llega desde la pantalla de "contraseña nueva" (/login?restablecida=1)
     readonly restablecida = this.route.snapshot.queryParamMap.get('restablecida') === '1';
 
-    // Se activa en la Etapa 9 (inicio de sesion con Google)
-    readonly googleHabilitado = false;
+    readonly errorGoogle = signal<string | null>(null);
 
     enviar(): void {
         this.error.set(null);
@@ -63,6 +63,12 @@ export class LoginPage {
                     this.form.controls.password.reset('');
                 },
             });
+    }
+
+    /** El boton de Google ya abrio la sesion: solo falta llevar a la persona a donde iba. */
+    alIniciarConGoogle(): void {
+        this.errorGoogle.set(null);
+        void this.router.navigateByUrl(destinoSeguro(this.route.snapshot.queryParamMap.get('returnUrl')));
     }
 
     /** Cuando la cuenta existe pero falta verificar el correo. */

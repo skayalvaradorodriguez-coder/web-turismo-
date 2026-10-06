@@ -35,6 +35,16 @@
 <h1 class="ui-title">Crea tu cuenta</h1>
 <p class="ui-sub">Regístrate para acceder al Observatorio Turístico Sostenible.</p>
 
+<app-google-button texto="signup_with" (iniciado)="alIniciarConGoogle()" (fallo)="errorGoogle.set($event)" />
+@if (errorGoogle()) {
+<div class="alert" role="alert" style="margin-top: 14px">
+    <app-icon name="alert" [size]="18" />
+    <span>{{ errorGoogle() }}</span>
+</div>
+}
+
+<div class="divider" role="separator"><span>o con tu correo</span></div>
+
 <form [formGroup]="form" (ngSubmit)="enviar()" novalidate class="ui-form">
     <div class="ui-grid-2">
         <app-field fieldId="nombres" label="Nombres" [sinIcono]="true" placeholder="Tus nombres"

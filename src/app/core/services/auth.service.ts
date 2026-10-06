@@ -43,6 +43,23 @@ export class AuthService {
         return this.http.post<unknown>(`${API_URL}/auth/reenviar-verificacion`, { email }).pipe(map(() => undefined));
     }
 
+    /** Numero de un solo navegador que protege el inicio de sesion con Google (viaja tambien en una cookie). */
+    googleNonce(): Observable<string> {
+        return this.http
+            .post<ApiOk<{ nonce: string }>>(`${API_URL}/auth/google/nonce`, {})
+            .pipe(map((respuesta) => respuesta.data.nonce));
+    }
+
+    /** Entra (o crea la cuenta) con la credencial que entrega Google. */
+    loginConGoogle(credential: string): Observable<Usuario> {
+        return this.http
+            .post<ApiOk<{ usuario: Usuario }>>(`${API_URL}/auth/google`, { credential })
+            .pipe(
+                map((respuesta) => respuesta.data.usuario),
+                tap((usuario) => this._usuario.set(usuario)),
+            );
+    }
+
     /** Pide el correo de recuperacion. La API responde igual exista o no la cuenta. */
     solicitarRecuperacion(email: string): Observable<void> {
         return this.http.post<unknown>(`${API_URL}/auth/recuperar`, { email }).pipe(map(() => undefined));

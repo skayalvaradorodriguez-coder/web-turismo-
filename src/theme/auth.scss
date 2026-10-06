@@ -718,3 +718,43 @@ a.btn {
     align-items: flex-start;
     gap: 4px;
 }
+
+
+/* ---------------------------------------------------------------- Etapa 9: boton de Google */
+@keyframes ots-shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.gbtn {
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    transition: opacity 0.2s ease;
+}
+
+.gbtn--oculto {
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.gbtn--procesando {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.gbtn--esqueleto {
+    border-radius: 14px;
+    background: linear-gradient(90deg, var(--line) 25%, var(--bg-accent) 50%, var(--line) 75%);
+    background-size: 200% 100%;
+    animation: ots-shimmer 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gbtn--esqueleto {
+        animation: none;
+    }
+}

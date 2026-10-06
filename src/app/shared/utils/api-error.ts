@@ -10,6 +10,9 @@ const MENSAJES: Record<string, string> = {
     SESION_INVALIDA: 'Tu sesión expiró. Inicia sesión de nuevo.',
     NO_AUTENTICADO: 'Debes iniciar sesión.',
     TOKEN_INVALIDO: 'El enlace no es válido, expiró o ya fue usado.',
+    GOOGLE_INVALIDO: 'No se pudo verificar tu cuenta de Google. Inténtalo de nuevo.',
+    GOOGLE_CUENTA_DISTINTA: 'Este correo ya está vinculado a otra cuenta de Google.',
+    GOOGLE_NO_CONFIGURADO: 'El acceso con Google no está disponible por ahora.',
 };
 
 /** Convierte cualquier error de la API en un mensaje claro para el usuario. */

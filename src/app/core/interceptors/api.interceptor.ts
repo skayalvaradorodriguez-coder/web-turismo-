@@ -6,8 +6,7 @@ import { API_URL } from '@app/core/config/api.config';
 import { AuthService } from '@app/core/services/auth.service';
 
 // En estas rutas un 401 es una respuesta normal (credenciales malas, sin sesion): no hay que redirigir
-const RUTAS_AUTH = ['/auth/login', '/auth/me', '/auth/logout'];
-
+const RUTAS_AUTH = ['/auth/login', '/auth/me', '/auth/logout', '/auth/google', '/auth/google/nonce'];
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     // Solo se tocan las peticiones a NUESTRA API; la cookie nunca se envia a otros sitios
     if (!req.url.startsWith(API_URL)) return next(req);
