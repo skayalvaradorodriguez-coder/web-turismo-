@@ -1,0 +1,79 @@
+@if (correoEnviado(); as correo) {
+<div class="ui-state">
+    <span class="ui-state__icon"><app-icon name="mail" [size]="30" /></span>
+    <h1 class="ui-title">Revisa tu correo</h1>
+    <p class="ui-sub">
+        Te enviamos un enlace de verificación a <strong>{{ correo }}</strong>. Es válido por 24 horas.
+    </p>
+    <p class="ui-note">¿No lo ves? Revisa la carpeta de correo no deseado (spam).</p>
+
+    @if (reenvioOk()) {
+    <div class="alert alert--ok" role="status">
+        <app-icon name="check" [size]="18" />
+        <span>Si el correo está pendiente de verificar, te enviamos un nuevo enlace.</span>
+    </div>
+    }
+    @if (error()) {
+    <div class="alert" role="alert">
+        <app-icon name="alert" [size]="18" />
+        <span>{{ error() }}</span>
+    </div>
+    }
+
+    <div class="ui-actions" style="margin-top: 18px">
+        <button type="button" class="btn btn--outline" (click)="reenviar()" [disabled]="espera() > 0 || reenviando()">
+            @if (reenviando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            }
+            <span>{{ espera() > 0 ? 'Reenviar en ' + espera() + ' s' : 'Reenviar correo' }}</span>
+        </button>
+        <a routerLink="/login" class="link">Volver a iniciar sesión</a>
+    </div>
+</div>
+} @else {
+<span class="ui-icon"><app-icon name="user" [size]="24" /></span>
+<h1 class="ui-title">Crea tu cuenta</h1>
+<p class="ui-sub">Regístrate para acceder al Observatorio Turístico Sostenible.</p>
+
+<form [formGroup]="form" (ngSubmit)="enviar()" novalidate class="ui-form">
+    <div class="ui-grid-2">
+        <app-field fieldId="nombres" label="Nombres" [sinIcono]="true" placeholder="Tus nombres"
+            autocomplete="given-name"
+            [mensajes]="{ minlength: 'Mínimo 2 caracteres', pattern: 'Usa solo letras, espacios, apóstrofes o guiones' }"
+            [control]="form.controls.nombres" />
+        <app-field fieldId="apellidos" label="Apellidos" [sinIcono]="true" placeholder="Tus apellidos"
+            autocomplete="family-name"
+            [mensajes]="{ minlength: 'Mínimo 2 caracteres', pattern: 'Usa solo letras, espacios, apóstrofes o guiones' }"
+            [control]="form.controls.apellidos" />
+    </div>
+
+    <app-field fieldId="email" label="Correo electrónico" type="email" icon="mail" placeholder="nombre@correo.com"
+        autocomplete="email" inputmode="email" [control]="form.controls.email" />
+
+    <div>
+        <app-field fieldId="password" label="Contraseña" type="password" icon="lock"
+            placeholder="Crea una contraseña segura" autocomplete="new-password" [soloAlSalir]="true"
+            [mensajes]="{ required: 'Crea una contraseña', passwordDebil: 'La contraseña no cumple los requisitos' }"
+            [control]="form.controls.password" />
+        <app-password-checklist [valor]="password()" />
+    </div>
+
+    @if (error()) {
+    <div class="alert" role="alert">
+        <app-icon name="alert" [size]="18" />
+        <span>{{ error() }}</span>
+    </div>
+    }
+
+    <button type="submit" class="btn btn--primary" [disabled]="cargando()" [attr.aria-busy]="cargando()">
+        @if (cargando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Creando cuenta…</span>
+        } @else {
+        <span>Crear cuenta</span>
+        }
+    </button>
+</form>
+
+<p class="ui-foot">¿Ya tienes cuenta? <a routerLink="/login" class="link">Iniciar sesión</a></p>
+}

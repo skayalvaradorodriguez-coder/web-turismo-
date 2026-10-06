@@ -4,6 +4,13 @@ import { catchError, finalize, firstValueFrom, map, Observable, of, tap, timeout
 import { API_URL } from '@app/core/config/api.config';
 import type { ApiOk, Usuario } from '@app/core/models/api.models';
 
+export interface DatosRegistro {
+    nombres: string;
+    apellidos: string;
+    email: string;
+    password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private readonly http = inject(HttpClient);
@@ -21,6 +28,19 @@ export class AuthService {
                 map((respuesta) => respuesta.data.usuario),
                 tap((usuario) => this._usuario.set(usuario)),
             );
+    }
+
+    /** Crea la cuenta. La API responde igual exista o no el correo, por eso no devuelve datos. */
+    registrar(datos: DatosRegistro): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/registro`, datos).pipe(map(() => undefined));
+    }
+
+    verificarEmail(token: string): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/verificar-email`, { token }).pipe(map(() => undefined));
+    }
+
+    reenviarVerificacion(email: string): Observable<void> {
+        return this.http.post<unknown>(`${API_URL}/auth/reenviar-verificacion`, { email }).pipe(map(() => undefined));
     }
 
     /** Cierra la sesion en la API y SIEMPRE limpia la sesion local, aunque la API falle. */

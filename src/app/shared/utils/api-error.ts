@@ -9,6 +9,7 @@ const MENSAJES: Record<string, string> = {
     VALIDACION: 'Revisa los datos ingresados e inténtalo de nuevo.',
     SESION_INVALIDA: 'Tu sesión expiró. Inicia sesión de nuevo.',
     NO_AUTENTICADO: 'Debes iniciar sesión.',
+    TOKEN_INVALIDO: 'El enlace no es válido, expiró o ya fue usado.',
 };
 
 /** Convierte cualquier error de la API en un mensaje claro para el usuario. */
@@ -29,4 +30,11 @@ export function mensajeDeError(error: unknown): string {
         return 'El servidor tuvo un problema. Inténtalo más tarde.';
     }
     return 'No se pudo completar la solicitud. Inténtalo de nuevo.';
+}
+
+/** Código de error de la API (por ejemplo EMAIL_NO_VERIFICADO), o null si no es un error de la API. */
+export function codigoDeError(error: unknown): string | null {
+    if (!(error instanceof HttpErrorResponse)) return null;
+    const cuerpo = error.error as Partial<ApiErrorBody> | null;
+    return cuerpo?.code ?? null;
 }

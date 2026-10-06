@@ -28,7 +28,19 @@
   @if (error()) {
   <div class="alert" role="alert">
     <app-icon name="alert" [size]="18" />
-    <span>{{ error() }}</span>
+    <div class="alert__body">
+      <span>{{ error() }}</span>
+      @if (sinVerificar()) {
+      @if (reenvio() === 'enviado') {
+      <span>Listo: si tu cuenta está pendiente, te enviamos un nuevo enlace.</span>
+      } @else {
+      <button type="button" class="btn btn--link" (click)="reenviarVerificacion()"
+        [disabled]="reenvio() === 'enviando'">
+        Reenviar correo de verificación
+      </button>
+      }
+      }
+    </div>
   </div>
   }
 

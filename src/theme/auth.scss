@@ -602,3 +602,119 @@ ion-content.auth-content {
         transition: none;
     }
 }
+
+
+/* ---------------------------------------------------------------- Etapa 7: registro y verificacion */
+:root {
+    --ok-bg: #e3f6f3;
+    --ok-ink: #0a5e59;
+}
+
+:root[data-theme='dark'] {
+    --ok-bg: #11302e;
+    --ok-ink: #7ae3da;
+}
+
+.ui-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 520px) {
+    .ui-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.alert--ok {
+    color: var(--ok-ink);
+    background: var(--ok-bg);
+    border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.ui-state {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.ui-state__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    color: var(--ok-ink);
+    background: var(--ok-bg);
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.ui-state__icon--error {
+    color: var(--danger);
+    background: var(--danger-bg);
+    border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+
+.ui-state .ui-sub {
+    margin-bottom: 18px;
+}
+
+.ui-state .ui-sub strong {
+    color: var(--ink);
+    overflow-wrap: anywhere;
+}
+
+.ui-note {
+    margin: 0 0 20px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+}
+
+.ui-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.ui-actions .link {
+    text-align: center;
+}
+
+a.btn {
+    text-decoration: none;
+}
+
+.spinner--lg {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+    color: var(--primary);
+}
+
+.btn--link {
+    width: auto;
+    min-height: 0;
+    padding: 6px 4px;
+    font: 600 0.88rem var(--font-body);
+    color: var(--link);
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.btn--link:disabled {
+    opacity: 0.6;
+    text-decoration: none;
+}
+
+.alert__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}

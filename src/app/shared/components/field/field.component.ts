@@ -17,10 +17,13 @@ const MENSAJES_BASE: Record<string, string> = {
       <label class="field__label" [for]="fieldId()">{{ label() }}</label>
 
       <div class="field__box">
-        <span class="field__icon" aria-hidden="true"><app-icon [name]="icon()" [size]="20" /></span>
+        @if (!sinIcono()) {
+          <span class="field__icon" aria-hidden="true"><app-icon [name]="icon()" [size]="20" /></span>
+        }
 
         <input
           class="field__input"
+          [class.field__input--plain]="sinIcono()"
           [id]="fieldId()"
           [type]="tipoActual()"
           [formControl]="control()"
@@ -75,6 +78,7 @@ const MENSAJES_BASE: Record<string, string> = {
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       }
+      .field__input--plain { padding: 0 14px; }
       .field__input::placeholder { color: var(--placeholder); font-weight: 400; opacity: 1; }
       .field__input:hover { border-color: var(--line-strong); }
       .field__input:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 4px var(--focus); }
@@ -116,6 +120,10 @@ export class FieldComponent {
     readonly autocomplete = input<string>();
     readonly inputmode = input<string>();
     readonly mensajes = input<Record<string, string>>({});
+    /** Si es true, el error solo aparece al salir del campo o al enviar, no mientras se escribe */
+    readonly soloAlSalir = input(false);
+    /** Campos angostos (por ejemplo nombres y apellidos en dos columnas): sin icono para dar mas espacio al texto */
+    readonly sinIcono = input(false);
 
     protected readonly visible = signal(false);
     protected readonly mayusculas = signal(false);
@@ -126,7 +134,7 @@ export class FieldComponent {
 
     protected invalido(): boolean {
         const c = this.control();
-        return c.invalid && (c.touched || c.dirty);
+        return c.invalid && (c.touched || (!this.soloAlSalir() && c.dirty));
     }
 
     protected mensaje(): string {

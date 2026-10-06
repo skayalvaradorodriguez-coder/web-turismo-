@@ -1,0 +1,57 @@
+@switch (estado()) {
+@case ('cargando') {
+<div class="ui-state" role="status" aria-live="polite">
+    <span class="ui-state__icon"><span class="spinner spinner--lg" aria-hidden="true"></span></span>
+    <h1 class="ui-title">Verificando tu correo…</h1>
+    <p class="ui-sub">Un momento, por favor.</p>
+</div>
+}
+
+@case ('ok') {
+<div class="ui-state">
+    <span class="ui-state__icon"><app-icon name="check" [size]="30" /></span>
+    <h1 class="ui-title">¡Correo verificado!</h1>
+    <p class="ui-sub">Tu cuenta ya está activa. Ahora puedes iniciar sesión.</p>
+    <a routerLink="/login" class="btn btn--primary">Iniciar sesión</a>
+</div>
+}
+
+@case ('error') {
+<div class="ui-state">
+    <span class="ui-state__icon ui-state__icon--error"><app-icon name="alert" [size]="30" /></span>
+    <h1 class="ui-title">No pudimos verificar tu correo</h1>
+    <p class="ui-sub">
+        El enlace no es válido, expiró o ya fue usado. Si ya verificaste tu correo, puedes iniciar sesión; si no,
+        pide un enlace nuevo.
+    </p>
+
+    @if (nuevoEnlaceEnviado()) {
+    <div class="alert alert--ok" role="status">
+        <app-icon name="check" [size]="18" />
+        <span>Si el correo está pendiente de verificar, te enviamos un nuevo enlace. Revisa tu bandeja.</span>
+    </div>
+    } @else {
+    <form [formGroup]="form" (ngSubmit)="pedirNuevoEnlace()" novalidate class="ui-form">
+        <app-field fieldId="email" label="Correo electrónico" type="email" icon="mail" placeholder="nombre@correo.com"
+            autocomplete="email" inputmode="email" [control]="form.controls.email" />
+        @if (error()) {
+        <div class="alert" role="alert">
+            <app-icon name="alert" [size]="18" />
+            <span>{{ error() }}</span>
+        </div>
+        }
+        <button type="submit" class="btn btn--primary" [disabled]="enviando()" [attr.aria-busy]="enviando()">
+            @if (enviando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Enviando…</span>
+            } @else {
+            <span>Enviar nuevo enlace</span>
+            }
+        </button>
+    </form>
+    }
+
+    <p class="ui-foot"><a routerLink="/login" class="link">Volver a iniciar sesión</a></p>
+</div>
+}
+}

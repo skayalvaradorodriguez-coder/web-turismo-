@@ -5,7 +5,7 @@ import { finalize } from 'rxjs';
 import { AuthService } from '@app/core/services/auth.service';
 import { FieldComponent } from '@app/shared/components/field/field.component';
 import { IconComponent } from '@app/shared/components/icon/icon.component';
-import { mensajeDeError } from '@app/shared/utils/api-error';
+import { codigoDeError, mensajeDeError } from '@app/shared/utils/api-error';
 import { destinoSeguro } from '@app/shared/utils/safe-url';
 
 @Component({
@@ -26,12 +26,16 @@ export class LoginPage {
 
     readonly cargando = signal(false);
     readonly error = signal<string | null>(null);
+    readonly sinVerificar = signal(false);
+    readonly reenvio = signal<'reposo' | 'enviando' | 'enviado'>('reposo');
 
     // Se activa en la Etapa 9 (inicio de sesion con Google)
     readonly googleHabilitado = false;
 
     enviar(): void {
         this.error.set(null);
+        this.sinVerificar.set(false);
+        this.reenvio.set('reposo');
 
         if (this.form.invalid) {
             this.form.markAllAsTouched();
@@ -52,8 +56,18 @@ export class LoginPage {
                 },
                 error: (error: unknown) => {
                     this.error.set(mensajeDeError(error));
+                    this.sinVerificar.set(codigoDeError(error) === 'EMAIL_NO_VERIFICADO');
                     this.form.controls.password.reset('');
                 },
             });
+    }
+
+    /** Cuando la cuenta existe pero falta verificar el correo. */
+    reenviarVerificacion(): void {
+        this.reenvio.set('enviando');
+        this.auth
+            .reenviarVerificacion(this.form.controls.email.value)
+            .pipe(finalize(() => this.reenvio.set('enviado')))
+            .subscribe({ error: () => this.reenvio.set('reposo') });
     }
 }

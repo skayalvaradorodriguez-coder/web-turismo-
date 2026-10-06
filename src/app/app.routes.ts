@@ -19,8 +19,12 @@ export const routes: Routes = [
       {
         path: 'registro',
         title: `Crear cuenta · ${MARCA}`,
-        data: { titulo: 'Crear cuenta' },
-        loadComponent: () => import('./features/auth/proximamente/proximamente.page').then((m) => m.ProximamentePage),
+        loadComponent: () => import('./features/auth/register/register.page').then((m) => m.RegisterPage),
+      },
+      {
+        path: 'verificar',
+        title: `Verificar correo · ${MARCA}`,
+        loadComponent: () => import('./features/auth/verify-email/verify-email.page').then((m) => m.VerifyEmailPage),
       },
       {
         path: 'recuperar',
