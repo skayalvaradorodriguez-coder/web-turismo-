@@ -91,9 +91,51 @@
                 <dd>{{ f.frecuenciaActualizacion || 'Sin definir' }}</dd>
               </div>
             </dl>
+
             @if (esGestion()) {
+              @if (errorAccion(); as fallo) {
+                @if (fallo.id === f.id) {
+                  <p class="fuente__error" role="alert">{{ fallo.mensaje }}</p>
+                }
+              }
+
               <div class="fuente__acciones">
-                <a class="fuente__editar" [routerLink]="['/fuentes', f.id, 'editar']" [attr.aria-label]="'Editar ' + f.nombre">Editar</a>
+                @if (confirmandoId() === f.id) {
+                  <p class="fuente__pregunta">¿Desactivar esta fuente? Podrás volver a activarla cuando quieras.</p>
+                  <button
+                    type="button"
+                    class="fuente__boton fuente__boton--peligro"
+                    [disabled]="cambiandoId() !== null"
+                    [attr.aria-busy]="cambiandoId() === f.id"
+                    (click)="cambiarEstado(f, 'inactiva')"
+                  >
+                    Sí, desactivar
+                  </button>
+                  <button type="button" class="fuente__boton" (click)="cancelarConfirmacion()">Cancelar</button>
+                } @else {
+                  <a class="fuente__editar" [routerLink]="['/fuentes', f.id, 'editar']" [attr.aria-label]="'Editar ' + f.nombre">Editar</a>
+                  @if (f.estado === 'activa') {
+                    <button
+                      type="button"
+                      class="fuente__boton"
+                      [attr.aria-label]="'Desactivar ' + f.nombre"
+                      (click)="pedirDesactivar(f.id)"
+                    >
+                      Desactivar
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="fuente__boton"
+                      [disabled]="cambiandoId() !== null"
+                      [attr.aria-busy]="cambiandoId() === f.id"
+                      [attr.aria-label]="'Activar ' + f.nombre"
+                      (click)="cambiarEstado(f, 'activa')"
+                    >
+                      Activar
+                    </button>
+                  }
+                }
               </div>
             }
           </li>

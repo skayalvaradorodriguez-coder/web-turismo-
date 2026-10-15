@@ -1,5 +1,7 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { ROLES_GESTION } from '@app/core/config/roles';
 import type { EstadoFuente, Fuente } from '@app/core/models/fuente.models';
 import { AuthService } from '@app/core/services/auth.service';
@@ -16,14 +18,22 @@ import { FiltroEstado, filtrarFuentes } from '../fuentes.utils';
 export class FuentesListaPage implements OnInit {
   private readonly api = inject(FuentesService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly fuentes = signal<Fuente[]>([]);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly texto = signal('');
   protected readonly estado = signal<FiltroEstado>('todas');
-  /** Mensaje de exito que deja el formulario al guardar (llega en el estado de la navegacion). */
+  /** Mensaje de exito (llega del formulario en el estado de la navegacion, o de activar/desactivar). */
   protected readonly aviso = signal<string | null>(null);
+
+  /** Fuente que esta pidiendo confirmacion para desactivarse. */
+  protected readonly confirmandoId = signal<number | null>(null);
+  /** Fuente cuyo cambio de estado esta en curso. */
+  protected readonly cambiandoId = signal<number | null>(null);
+  /** Error del ultimo cambio de estado, con la fuente a la que pertenece. */
+  protected readonly errorAccion = signal<{ id: number; mensaje: string } | null>(null);
 
   protected readonly esGestion = computed(() => ROLES_GESTION.includes(this.auth.usuario()?.rol ?? ''));
   protected readonly visibles = computed(() => filtrarFuentes(this.fuentes(), this.texto(), this.estado()));
@@ -69,5 +79,43 @@ export class FuentesListaPage implements OnInit {
 
   protected etiquetaEstado(estado: EstadoFuente): string {
     return estado === 'activa' ? 'Activa' : 'Inactiva';
+  }
+
+  protected pedirDesactivar(id: number): void {
+    this.errorAccion.set(null);
+    this.confirmandoId.set(id);
+  }
+
+  protected cancelarConfirmacion(): void {
+    this.confirmandoId.set(null);
+  }
+
+  protected cambiarEstado(fuente: Fuente, nuevo: EstadoFuente): void {
+    if (this.cambiandoId() !== null) return;
+
+    this.errorAccion.set(null);
+    this.aviso.set(null);
+    this.cambiandoId.set(fuente.id);
+
+    this.api
+      .cambiarEstado(fuente.id, nuevo)
+      .pipe(
+        finalize(() => this.cambiandoId.set(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (actualizada) => {
+          this.fuentes.update((lista) => lista.map((f) => (f.id === actualizada.id ? actualizada : f)));
+          this.confirmandoId.set(null);
+          this.aviso.set(`Fuente "${actualizada.nombre}" ${nuevo === 'activa' ? 'activada' : 'desactivada'}.`);
+        },
+        error: (e: unknown) => {
+          this.confirmandoId.set(null);
+          this.errorAccion.set({
+            id: fuente.id,
+            mensaje: mensajeApi(e, 'No se pudo cambiar el estado de la fuente. Inténtalo de nuevo.'),
+          });
+        },
+      });
   }
 }
