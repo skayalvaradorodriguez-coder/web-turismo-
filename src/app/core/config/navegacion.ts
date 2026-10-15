@@ -11,7 +11,7 @@ export interface ItemMenu {
 
 /**
  * Entradas del menu lateral. Se agregan aqui a medida que existe cada pantalla
- * (Cargas y Usuarios llegan en los siguientes pasos).
+ * (Usuarios llega en un paso posterior).
  */
 export const MENU: readonly ItemMenu[] = [
   { etiqueta: 'Inicio', ruta: '/home', icono: 'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10' },
@@ -19,6 +19,12 @@ export const MENU: readonly ItemMenu[] = [
     etiqueta: 'Fuentes',
     ruta: '/fuentes',
     icono: 'M4 5c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6',
+    roles: ROLES_CONSULTA,
+  },
+  {
+    etiqueta: 'Cargas',
+    ruta: '/cargas',
+    icono: 'M12 3v12M7 8l5-5 5 5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4',
     roles: ROLES_CONSULTA,
   },
 ];

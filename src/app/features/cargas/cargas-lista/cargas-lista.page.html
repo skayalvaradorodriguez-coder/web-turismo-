@@ -1,0 +1,107 @@
+<section class="pagina">
+  <header class="cabecera">
+    <p class="eyebrow"><span></span>Cargas</p>
+    <h1 class="titulo">Información <em>incorporada</em></h1>
+    <p class="texto">
+      Cada carga conserva el archivo original, la fuente de la que viene y el período al que corresponde.
+    </p>
+  </header>
+
+  <div class="herramientas">
+    <div class="campo">
+      <label for="filtro-fuente">Fuente</label>
+      <select id="filtro-fuente" (change)="alCambiarFuente($event)">
+        <option value="" [selected]="fuenteId() === null">Todas las fuentes</option>
+        @for (f of fuentes(); track f.id) {
+          <option [value]="f.id" [selected]="fuenteId() === f.id">{{ f.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="filtro-estado">Estado</label>
+      <select id="filtro-estado" (change)="alCambiarEstado($event)">
+        <option value="" [selected]="estado() === ''">Todos los estados</option>
+        @for (e of estados; track e.valor) {
+          <option [value]="e.valor" [selected]="estado() === e.valor">{{ e.etiqueta }}</option>
+        }
+      </select>
+    </div>
+
+    @if (hayFiltros()) {
+      <button type="button" class="boton boton--secundario" (click)="quitarFiltros()">Quitar filtros</button>
+    }
+  </div>
+
+  <div aria-live="polite">
+    @if (cargando()) {
+      <p class="aviso" role="status">Cargando cargas…</p>
+    } @else if (error(); as mensaje) {
+      <div class="aviso aviso--error" role="alert">
+        <p>{{ mensaje }}</p>
+        <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else if (cargas().length === 0) {
+      @if (hayFiltros()) {
+        <div class="aviso">
+          <p>Ninguna carga coincide con los filtros.</p>
+          <button type="button" class="boton" (click)="quitarFiltros()">Quitar filtros</button>
+        </div>
+      } @else {
+        <p class="aviso">Aún no hay cargas registradas.</p>
+      }
+    } @else {
+      <p class="resumen">{{ total() }} {{ total() === 1 ? 'carga' : 'cargas' }}</p>
+
+      <ul class="rejilla">
+        @for (c of cargas(); track c.id) {
+          <li class="carga">
+            <span class="carga__franja" aria-hidden="true"></span>
+            <div class="carga__arriba">
+              <span class="insignia" [attr.data-estado]="c.estado">{{ etiquetaEstado(c.estado) }}</span>
+              <span class="carga__id">Carga #{{ c.id }}</span>
+            </div>
+            <h2 class="carga__fuente">{{ nombreFuente(c.fuenteId) }}</h2>
+            @if (c.descripcion) {
+              <p class="carga__descripcion">{{ c.descripcion }}</p>
+            }
+            @if (c.estado === 'rechazada' && c.motivoRechazo) {
+              <p class="carga__motivo"><strong>Motivo del rechazo:</strong> {{ c.motivoRechazo }}</p>
+            }
+            <dl class="carga__datos">
+              <div>
+                <dt>Período</dt>
+                <dd>{{ periodo(c) }}</dd>
+              </div>
+              <div>
+                <dt>Nivel de ingreso</dt>
+                <dd>Nivel {{ c.nivelIngreso }}</dd>
+              </div>
+              <div>
+                <dt>Registrada</dt>
+                <dd>{{ fechaRegistro(c.creadaEn) }}</dd>
+              </div>
+            </dl>
+          </li>
+        }
+      </ul>
+
+      @if (totalPaginas() > 1) {
+        <nav class="paginacion" aria-label="Paginación de cargas">
+          <button type="button" class="boton boton--secundario" [disabled]="pagina() <= 1" (click)="irAPagina(pagina() - 1)">
+            Anterior
+          </button>
+          <p>Página {{ pagina() }} de {{ totalPaginas() }}</p>
+          <button
+            type="button"
+            class="boton boton--secundario"
+            [disabled]="pagina() >= totalPaginas()"
+            (click)="irAPagina(pagina() + 1)"
+          >
+            Siguiente
+          </button>
+        </nav>
+      }
+    }
+  </div>
+</section>

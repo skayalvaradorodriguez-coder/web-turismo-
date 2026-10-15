@@ -60,6 +60,13 @@ export const routes: Routes = [
           import('./features/fuentes/fuentes-lista/fuentes-lista.page').then((m) => m.FuentesListaPage),
       },
       {
+        path: 'cargas',
+        canActivate: [rolGuard(...ROLES_CONSULTA)],
+        title: `Cargas · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/cargas/cargas-lista/cargas-lista.page').then((m) => m.CargasListaPage),
+      },
+      {
         path: 'fuentes/nueva',
         canActivate: [rolGuard(...ROLES_GESTION)],
         title: `Nueva fuente · ${MARCA}`,

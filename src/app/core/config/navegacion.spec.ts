@@ -28,3 +28,12 @@ describe('menuPara', () => {
     for (const ruta of restringidas) expect(vistas).not.toContain(ruta);
   });
 });
+
+describe('menuPara (Cargas)', () => {
+  it('gestion e investigador ven Cargas; externo no', () => {
+    expect(rutas('super_admin')).toContain('/cargas');
+    expect(rutas('admin')).toContain('/cargas');
+    expect(rutas('investigador')).toContain('/cargas');
+    expect(rutas('externo')).not.toContain('/cargas');
+  });
+});
