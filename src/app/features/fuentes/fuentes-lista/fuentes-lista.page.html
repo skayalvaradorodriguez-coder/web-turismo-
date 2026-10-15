@@ -8,6 +8,13 @@
     </p>
   </header>
 
+  @if (aviso(); as mensaje) {
+    <div class="aviso aviso--ok" role="status">
+      <p>{{ mensaje }}</p>
+      <button type="button" class="aviso__cerrar" aria-label="Cerrar aviso" (click)="aviso.set(null)">Cerrar</button>
+    </div>
+  }
+
   <div class="herramientas">
     <div class="buscador">
       <label class="buscador__etiqueta" for="buscar-fuente">Buscar fuente</label>
@@ -35,6 +42,10 @@
         </button>
       }
     </div>
+
+    @if (esGestion()) {
+      <a class="boton" routerLink="/fuentes/nueva">Nueva fuente</a>
+    }
   </div>
 
   <div aria-live="polite">
@@ -80,6 +91,11 @@
                 <dd>{{ f.frecuenciaActualizacion || 'Sin definir' }}</dd>
               </div>
             </dl>
+            @if (esGestion()) {
+              <div class="fuente__acciones">
+                <a class="fuente__editar" [routerLink]="['/fuentes', f.id, 'editar']" [attr.aria-label]="'Editar ' + f.nombre">Editar</a>
+              </div>
+            }
           </li>
         }
       </ul>

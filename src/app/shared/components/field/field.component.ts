@@ -21,21 +21,33 @@ const MENSAJES_BASE: Record<string, string> = {
           <span class="field__icon" aria-hidden="true"><app-icon [name]="icon()" [size]="20" /></span>
         }
 
-        <input
-          class="field__input"
-          [class.field__input--plain]="sinIcono()"
-          [id]="fieldId()"
-          [type]="tipoActual()"
-          [formControl]="control()"
-          [placeholder]="placeholder()"
-          [attr.autocomplete]="autocomplete()"
-          [attr.inputmode]="inputmode()"
-          [attr.aria-invalid]="invalido()"
-          [attr.aria-describedby]="invalido() ? fieldId() + '-msg' : null"
-          (keydown)="revisarMayusculas($event)"
-          (keyup)="revisarMayusculas($event)"
-          (blur)="mayusculas.set(false)"
-        />
+        @if (lineas() > 0) {
+          <textarea
+            class="field__input field__input--plain field__input--area"
+            [id]="fieldId()"
+            [formControl]="control()"
+            [rows]="lineas()"
+            [placeholder]="placeholder()"
+            [attr.aria-invalid]="invalido()"
+            [attr.aria-describedby]="invalido() ? fieldId() + '-msg' : null"
+          ></textarea>
+        } @else {
+          <input
+            class="field__input"
+            [class.field__input--plain]="sinIcono()"
+            [id]="fieldId()"
+            [type]="tipoActual()"
+            [formControl]="control()"
+            [placeholder]="placeholder()"
+            [attr.autocomplete]="autocomplete()"
+            [attr.inputmode]="inputmode()"
+            [attr.aria-invalid]="invalido()"
+            [attr.aria-describedby]="invalido() ? fieldId() + '-msg' : null"
+            (keydown)="revisarMayusculas($event)"
+            (keyup)="revisarMayusculas($event)"
+            (blur)="mayusculas.set(false)"
+          />
+        }
 
         @if (type() === 'password') {
           <button
@@ -79,9 +91,11 @@ const MENSAJES_BASE: Record<string, string> = {
         transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       }
       .field__input--plain { padding: 0 14px; }
+      .field__input--area { height: auto; min-height: 110px; padding: 12px 14px; line-height: 1.5; resize: vertical; }
       .field__input::placeholder { color: var(--placeholder); font-weight: 400; opacity: 1; }
       .field__input:hover { border-color: var(--line-strong); }
       .field__input:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 4px var(--focus); }
+      .field__input:disabled { opacity: 0.7; cursor: not-allowed; background: var(--bg-accent); }
       .field__input:-webkit-autofill {
         -webkit-text-fill-color: var(--ink);
         box-shadow: 0 0 0 1000px var(--surface) inset;
@@ -124,6 +138,8 @@ export class FieldComponent {
     readonly soloAlSalir = input(false);
     /** Campos angostos (por ejemplo nombres y apellidos en dos columnas): sin icono para dar mas espacio al texto */
     readonly sinIcono = input(false);
+    /** Mayor que 0: el campo es un area de texto con ese numero de lineas (usar junto con sinIcono) */
+    readonly lineas = input(0);
 
     protected readonly visible = signal(false);
     protected readonly mayusculas = signal(false);

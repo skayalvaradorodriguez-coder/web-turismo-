@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from '@app/core/guards/auth.guard';
 import { rolGuard } from '@app/core/guards/roles.guard';
-import { ROLES_CONSULTA } from '@app/core/config/roles';
+import { ROLES_CONSULTA, ROLES_GESTION } from '@app/core/config/roles';
 
 const MARCA = 'Observatorio Turístico Sostenible';
 
@@ -58,6 +58,20 @@ export const routes: Routes = [
         title: `Fuentes · ${MARCA}`,
         loadComponent: () =>
           import('./features/fuentes/fuentes-lista/fuentes-lista.page').then((m) => m.FuentesListaPage),
+      },
+      {
+        path: 'fuentes/nueva',
+        canActivate: [rolGuard(...ROLES_GESTION)],
+        title: `Nueva fuente · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/fuentes/fuente-form/fuente-form.page').then((m) => m.FuenteFormPage),
+      },
+      {
+        path: 'fuentes/:id/editar',
+        canActivate: [rolGuard(...ROLES_GESTION)],
+        title: `Editar fuente · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/fuentes/fuente-form/fuente-form.page').then((m) => m.FuenteFormPage),
       },
     ],
   },

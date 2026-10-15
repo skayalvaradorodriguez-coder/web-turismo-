@@ -1,0 +1,141 @@
+<section class="pagina">
+  <a class="volver" routerLink="/fuentes">
+    <app-icon name="arrow-left" [size]="18" />
+    Fuentes
+  </a>
+
+  <header class="cabecera">
+    <p class="eyebrow"><span></span>Fuentes</p>
+    <h1 class="titulo">{{ editando ? 'Editar' : 'Nueva' }} <em>fuente</em></h1>
+    <p class="texto">
+      Registra de dónde viene la información: quién la entrega, cómo se obtiene y con qué condiciones de uso.
+    </p>
+  </header>
+
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando fuente…</p>
+  } @else if (errorCarga(); as mensaje) {
+    <div class="aviso aviso--error" role="alert">
+      <p>{{ mensaje }}</p>
+      <a class="boton" routerLink="/fuentes">Volver a Fuentes</a>
+    </div>
+  } @else {
+    <form class="tarjeta" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <span class="tarjeta__franja" aria-hidden="true"></span>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Identificación</legend>
+        <div class="campos">
+          <app-field
+            fieldId="codigo"
+            label="Código"
+            [sinIcono]="true"
+            placeholder="catastro_turistico"
+            [control]="form.controls.codigo"
+            [mensajes]="mensajes().codigo"
+          />
+          <app-field
+            fieldId="nombre"
+            label="Nombre"
+            [sinIcono]="true"
+            placeholder="Nombre de la fuente"
+            [control]="form.controls.nombre"
+            [mensajes]="mensajes().nombre"
+          />
+        </div>
+        @if (editando) {
+          <p class="ayuda">El código identifica la fuente y no cambia después de crearla.</p>
+        } @else {
+          <p class="ayuda">El código no se podrá cambiar después. Usa minúsculas, números y guion bajo.</p>
+        }
+        <app-field
+          fieldId="institucion"
+          label="Institución"
+          [sinIcono]="true"
+          placeholder="Institución que entrega la información"
+          [control]="form.controls.institucion"
+          [mensajes]="mensajes().institucion"
+        />
+      </fieldset>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Descripción y procedencia</legend>
+        <app-field
+          fieldId="descripcion"
+          label="Descripción (opcional)"
+          [sinIcono]="true"
+          [lineas]="3"
+          placeholder="Qué información contiene esta fuente"
+          [control]="form.controls.descripcion"
+          [mensajes]="mensajes().descripcion"
+        />
+        <app-field
+          fieldId="procedencia"
+          label="Procedencia (opcional)"
+          [sinIcono]="true"
+          [lineas]="3"
+          placeholder="De dónde y cómo se obtuvo"
+          [control]="form.controls.procedencia"
+          [mensajes]="mensajes().procedencia"
+        />
+        <div class="campos">
+          <app-field
+            fieldId="licenciaUso"
+            label="Licencia o condición de uso (opcional)"
+            [sinIcono]="true"
+            [control]="form.controls.licenciaUso"
+            [mensajes]="mensajes().licenciaUso"
+          />
+          <app-field
+            fieldId="responsable"
+            label="Responsable (opcional)"
+            [sinIcono]="true"
+            [control]="form.controls.responsable"
+            [mensajes]="mensajes().responsable"
+          />
+        </div>
+      </fieldset>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Acceso y actualización</legend>
+        <div class="campos campos--tres">
+          <app-field
+            fieldId="tipoFuente"
+            label="Tipo de fuente (opcional)"
+            [sinIcono]="true"
+            [control]="form.controls.tipoFuente"
+            [mensajes]="mensajes().tipoFuente"
+          />
+          <app-field
+            fieldId="mecanismoAcceso"
+            label="Mecanismo de acceso (opcional)"
+            [sinIcono]="true"
+            [control]="form.controls.mecanismoAcceso"
+            [mensajes]="mensajes().mecanismoAcceso"
+          />
+          <app-field
+            fieldId="frecuenciaActualizacion"
+            label="Frecuencia de actualización (opcional)"
+            [sinIcono]="true"
+            [control]="form.controls.frecuenciaActualizacion"
+            [mensajes]="mensajes().frecuenciaActualizacion"
+          />
+        </div>
+      </fieldset>
+
+      @if (error()) {
+        <div class="aviso aviso--error" role="alert">
+          <app-icon name="alert" [size]="18" />
+          <p>{{ error() }}</p>
+        </div>
+      }
+
+      <div class="acciones">
+        <button type="submit" class="boton" [disabled]="guardando()" [attr.aria-busy]="guardando()">
+          {{ guardando() ? 'Guardando…' : editando ? 'Guardar cambios' : 'Crear fuente' }}
+        </button>
+        <a class="boton boton--secundario" routerLink="/fuentes">Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

@@ -41,3 +41,22 @@ export function codigoDeError(error: unknown): string | null {
     const cuerpo = error.error as Partial<ApiErrorBody> | null;
     return cuerpo?.code ?? null;
 }
+
+/** Mensaje que la API envia en su cuerpo (ya viene en español), o el texto por defecto. */
+export function mensajeApi(error: unknown, porDefecto: string): string {
+    if (error instanceof HttpErrorResponse) {
+        if (error.status === 0) {
+            return 'No se pudo conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.';
+        }
+        const mensaje = (error.error as Partial<ApiErrorBody> | null)?.message;
+        if (typeof mensaje === 'string' && mensaje.trim()) return mensaje;
+    }
+    return porDefecto;
+}
+
+/** Errores por campo que devuelve la API al validar (código VALIDACION), o lista vacía. */
+export function detallesDeError(error: unknown): { campo: string; mensaje: string }[] {
+    if (!(error instanceof HttpErrorResponse)) return [];
+    const detalles = (error.error as Partial<ApiErrorBody> | null)?.details;
+    return Array.isArray(detalles) ? detalles : [];
+}
