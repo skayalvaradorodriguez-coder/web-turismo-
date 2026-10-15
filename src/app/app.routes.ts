@@ -60,11 +60,25 @@ export const routes: Routes = [
           import('./features/fuentes/fuentes-lista/fuentes-lista.page').then((m) => m.FuentesListaPage),
       },
       {
+        path: 'cargas/nueva',
+        canActivate: [rolGuard(...ROLES_GESTION)],
+        title: `Nueva carga · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/cargas/carga-form/carga-form.page').then((m) => m.CargaFormPage),
+      },
+      {
         path: 'cargas',
         canActivate: [rolGuard(...ROLES_CONSULTA)],
         title: `Cargas · ${MARCA}`,
         loadComponent: () =>
           import('./features/cargas/cargas-lista/cargas-lista.page').then((m) => m.CargasListaPage),
+      },
+      {
+        path: 'cargas/:id',
+        canActivate: [rolGuard(...ROLES_CONSULTA)],
+        title: `Detalle de carga · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/cargas/carga-detalle/carga-detalle.page').then((m) => m.CargaDetallePage),
       },
       {
         path: 'fuentes/nueva',

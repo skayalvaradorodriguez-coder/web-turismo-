@@ -1,10 +1,12 @@
 import { HttpParams, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { describe, expect, it } from 'vitest';
 import { API_URL } from '@app/core/config/api.config';
 import type { Carga, EstadoCarga } from '@app/core/models/carga.models';
 import type { Fuente } from '@app/core/models/fuente.models';
+import { AuthService } from '@app/core/services/auth.service';
 import { CargasListaPage } from './cargas-lista.page';
 
 const URL_CARGAS = `${API_URL}/cargas`;
@@ -18,8 +20,15 @@ const carga = (id: number, fuenteId: number, estado: EstadoCarga, extra: Partial
 
 const fuente = (id: number, nombre: string) => ({ id, nombre }) as Fuente;
 
-function preparar() {
-  TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+function preparar(rol = 'admin') {
+  TestBed.configureTestingModule({
+    providers: [
+      provideRouter([]),
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      { provide: AuthService, useValue: { usuario: () => ({ rol }) } },
+    ],
+  });
   const fixture = TestBed.createComponent(CargasListaPage);
   const http = TestBed.inject(HttpTestingController);
   fixture.detectChanges();
@@ -114,5 +123,19 @@ describe('CargasListaPage', () => {
     fixture.detectChanges();
 
     pedidoCargas((p) => p.get('pagina') === '2');
+  });
+
+  it('gestion ve el boton "Nueva carga"', () => {
+    const { texto, responder } = preparar('admin');
+    responder([], []);
+
+    expect(texto()).toContain('Nueva carga');
+  });
+
+  it('el investigador solo consulta: no ve "Nueva carga"', () => {
+    const { texto, responder } = preparar('investigador');
+    responder([], []);
+
+    expect(texto()).not.toContain('Nueva carga');
   });
 });

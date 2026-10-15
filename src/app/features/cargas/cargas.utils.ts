@@ -43,3 +43,24 @@ export function etiquetaNivelIngreso(nivel: number): string {
   const nombre = NIVELES_INGRESO[nivel];
   return nombre ? `Nivel ${nivel} · ${nombre}` : `Nivel ${nivel}`;
 }
+
+/** Formatos que acepta la API (ella vuelve a revisar el contenido real del archivo). */
+export const EXTENSIONES_PERMITIDAS = ['csv', 'txt', 'json', 'xlsx', 'xls', 'pdf', 'png', 'jpg', 'jpeg'] as const;
+
+/** Ultima extension en minusculas, o null si el nombre no tiene una. */
+export function extensionDe(nombre: string): string | null {
+  const punto = nombre.lastIndexOf('.');
+  if (punto <= 0 || punto === nombre.length - 1) return null;
+  return nombre.slice(punto + 1).toLowerCase();
+}
+
+export function esArchivoPermitido(nombre: string): boolean {
+  const extension = extensionDe(nombre);
+  return extension !== null && (EXTENSIONES_PERMITIDAS as readonly string[]).includes(extension);
+}
+
+export function formatearTamano(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1).replace('.', ',')} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB`;
+}

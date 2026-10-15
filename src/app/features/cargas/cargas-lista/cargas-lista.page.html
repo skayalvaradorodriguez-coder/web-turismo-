@@ -7,6 +7,13 @@
     </p>
   </header>
 
+  @if (aviso(); as mensaje) {
+    <div class="aviso aviso--ok" role="status">
+      <p>{{ mensaje }}</p>
+      <button type="button" class="aviso__cerrar" aria-label="Cerrar aviso" (click)="aviso.set(null)">Cerrar</button>
+    </div>
+  }
+
   <div class="herramientas">
     <div class="campo">
       <label for="filtro-fuente">Fuente</label>
@@ -30,6 +37,10 @@
 
     @if (hayFiltros()) {
       <button type="button" class="boton boton--secundario" (click)="quitarFiltros()">Quitar filtros</button>
+    }
+
+    @if (esGestion()) {
+      <a class="boton boton--nueva" routerLink="/cargas/nueva">Nueva carga</a>
     }
   </div>
 
@@ -61,7 +72,7 @@
               <span class="insignia" [attr.data-estado]="c.estado">{{ etiquetaEstado(c.estado) }}</span>
               <span class="carga__id">Carga #{{ c.id }}</span>
             </div>
-            <h2 class="carga__fuente">{{ nombreFuente(c.fuenteId) }}</h2>
+            <h2 class="carga__fuente"><a class="carga__enlace" [routerLink]="['/cargas', c.id]">{{ nombreFuente(c.fuenteId) }}</a></h2>
             @if (c.descripcion) {
               <p class="carga__descripcion">{{ c.descripcion }}</p>
             }

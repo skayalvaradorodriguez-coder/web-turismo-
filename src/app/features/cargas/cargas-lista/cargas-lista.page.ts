@@ -1,7 +1,10 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ROLES_GESTION } from '@app/core/config/roles';
 import type { Carga, EstadoCarga } from '@app/core/models/carga.models';
 import type { Fuente } from '@app/core/models/fuente.models';
+import { AuthService } from '@app/core/services/auth.service';
 import { CargasService } from '@app/core/services/cargas.service';
 import { FuentesService } from '@app/core/services/fuentes.service';
 import { mensajeApi } from '@app/shared/utils/api-error';
@@ -9,12 +12,14 @@ import { ESTADOS_CARGA, etiquetaEstadoCarga, etiquetaNivelIngreso, formatearPeri
 
 @Component({
   selector: 'app-cargas-lista',
+  imports: [RouterLink],
   templateUrl: './cargas-lista.page.html',
   styleUrl: './cargas-lista.page.scss',
 })
 export class CargasListaPage implements OnInit {
   private readonly cargasApi = inject(CargasService);
   private readonly fuentesApi = inject(FuentesService);
+  private readonly auth = inject(AuthService);
   private readonly limite = 20;
   private suscripcion?: Subscription;
 
@@ -23,17 +28,23 @@ export class CargasListaPage implements OnInit {
   protected readonly pagina = signal(1);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
+  /** Mensaje de exito que deja el formulario al guardar (llega en el estado de la navegacion). */
+  protected readonly aviso = signal<string | null>(null);
 
   protected readonly fuentes = signal<Fuente[]>([]);
   protected readonly fuenteId = signal<number | null>(null);
   protected readonly estado = signal<EstadoCarga | ''>('');
 
   protected readonly estados = ESTADOS_CARGA;
+  protected readonly esGestion = computed(() => ROLES_GESTION.includes(this.auth.usuario()?.rol ?? ''));
   protected readonly hayFiltros = computed(() => this.fuenteId() !== null || this.estado() !== '');
   protected readonly totalPaginas = computed(() => Math.max(1, Math.ceil(this.total() / this.limite)));
   private readonly nombresFuente = computed(() => new Map(this.fuentes().map((f) => [f.id, f.nombre])));
 
   constructor() {
+    const estadoNavegacion = inject(Router).getCurrentNavigation()?.extras.state as { aviso?: string } | undefined;
+    if (estadoNavegacion?.aviso) this.aviso.set(estadoNavegacion.aviso);
+
     // si la persona sale de la pantalla, no se atiende una respuesta que ya no se ve
     inject(DestroyRef).onDestroy(() => this.suscripcion?.unsubscribe());
   }

@@ -1,0 +1,180 @@
+<section class="pagina">
+  <a class="volver" routerLink="/cargas">
+    <app-icon name="arrow-left" [size]="18" />
+    Cargas
+  </a>
+
+  <header class="cabecera">
+    <p class="eyebrow"><span></span>Cargas</p>
+    <h1 class="titulo">Nueva <em>carga</em></h1>
+    <p class="texto">
+      Sube el archivo tal como lo entregó la fuente. El original se guarda sin modificarse, con su huella de
+      verificación, y toda carga nueva empieza como "Guardada y catalogada".
+    </p>
+  </header>
+
+  @if (cargandoFuentes()) {
+    <p class="aviso" role="status">Cargando fuentes…</p>
+  } @else if (errorFuentes(); as mensaje) {
+    <div class="aviso aviso--error" role="alert">
+      <p>{{ mensaje }}</p>
+      <a class="boton" routerLink="/cargas">Volver a Cargas</a>
+    </div>
+  } @else if (fuentes().length === 0) {
+    <div class="aviso">
+      <p>No hay fuentes activas. Registra o activa una fuente antes de subir una carga.</p>
+      <a class="boton" routerLink="/fuentes">Ir a Fuentes</a>
+    </div>
+  } @else {
+    <form class="tarjeta" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <span class="tarjeta__franja" aria-hidden="true"></span>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Origen</legend>
+
+        <div class="campo" [class.campo--error]="fuenteInvalida()">
+          <label class="campo__etiqueta" for="fuente">Fuente</label>
+          <select
+            id="fuente"
+            class="campo__control"
+            [formControl]="form.controls.fuenteId"
+            [attr.aria-invalid]="fuenteInvalida()"
+            [attr.aria-describedby]="fuenteInvalida() ? 'fuente-msg' : null"
+          >
+            <option value="">Elige la fuente de esta carga</option>
+            @for (f of fuentes(); track f.id) {
+              <option [value]="f.id">{{ f.nombre }}</option>
+            }
+          </select>
+          @if (fuenteInvalida()) {
+            <p class="error" id="fuente-msg"><app-icon name="alert" [size]="15" />{{ mensajeFuente() }}</p>
+          }
+        </div>
+
+        <div class="campo" [class.campo--error]="mensajeArchivo()">
+          <label class="campo__etiqueta" for="archivo">Archivo original</label>
+          <input
+            id="archivo"
+            class="campo__archivo"
+            type="file"
+            [accept]="aceptar"
+            aria-describedby="archivo-ayuda"
+            (change)="alElegirArchivo($event)"
+          />
+          <p class="ayuda" id="archivo-ayuda">Formatos: {{ formatos }}.</p>
+          @if (archivo(); as elegido) {
+            <p class="archivo-datos">{{ elegido.name }} · {{ tamano(elegido.size) }}</p>
+          }
+          @if (mensajeArchivo(); as mensaje) {
+            <p class="error" role="alert"><app-icon name="alert" [size]="15" />{{ mensaje }}</p>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Período y descripción</legend>
+        <div class="campos">
+          <app-field
+            fieldId="periodo-desde"
+            label="Inicio del período (opcional)"
+            type="date"
+            [sinIcono]="true"
+            [control]="form.controls.periodoDesde"
+            [mensajes]="mensajes().periodoDesde"
+          />
+          <app-field
+            fieldId="periodo-hasta"
+            label="Fin del período (opcional)"
+            type="date"
+            [sinIcono]="true"
+            [control]="form.controls.periodoHasta"
+            [mensajes]="mensajes().periodoHasta"
+          />
+        </div>
+        @if (periodoInvalido()) {
+          <p class="error" role="alert">
+            <app-icon name="alert" [size]="15" />El fin del período no puede ser anterior al inicio.
+          </p>
+        }
+        <app-field
+          fieldId="descripcion"
+          label="Descripción (opcional)"
+          [sinIcono]="true"
+          [lineas]="3"
+          placeholder="Qué contiene esta carga y a qué corresponde"
+          [control]="form.controls.descripcion"
+          [mensajes]="mensajes().descripcion"
+        />
+      </fieldset>
+
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Metadatos (opcional)</legend>
+        <p class="ayuda">
+          Datos que describen la carga, por ejemplo la cobertura o la versión del formulario. Cada uno lleva un
+          nombre y un valor.
+        </p>
+
+        @for (fila of metadatos.controls; track fila; let i = $index) {
+          <div class="meta">
+            <app-field
+              [fieldId]="'meta-nombre-' + i"
+              label="Nombre"
+              [sinIcono]="true"
+              [control]="fila.controls.clave"
+              [mensajes]="mensajesMetadato"
+            />
+            <app-field
+              [fieldId]="'meta-valor-' + i"
+              label="Valor"
+              [sinIcono]="true"
+              [control]="fila.controls.valor"
+              [mensajes]="mensajesMetadato"
+            />
+            <button
+              type="button"
+              class="boton boton--secundario meta__quitar"
+              [attr.aria-label]="'Quitar el metadato ' + (i + 1)"
+              (click)="quitarMetadato(i)"
+            >
+              Quitar
+            </button>
+            @if (filaIncompleta(fila)) {
+              <p class="error meta__error" role="alert">
+                <app-icon name="alert" [size]="15" />Completa el nombre y el valor, o quita esta fila.
+              </p>
+            }
+          </div>
+        }
+
+        @if (metadatos.hasError('repetidos')) {
+          <p class="error" role="alert"><app-icon name="alert" [size]="15" />Hay nombres de metadato repetidos.</p>
+        }
+
+        <div>
+          <button
+            type="button"
+            class="boton boton--secundario"
+            [disabled]="metadatos.length >= maxMetadatos"
+            (click)="agregarMetadato()"
+          >
+            Agregar metadato
+          </button>
+        </div>
+      </fieldset>
+
+      @if (error()) {
+        <div class="aviso aviso--error" role="alert">
+          <app-icon name="alert" [size]="18" />
+          <p>{{ error() }}</p>
+        </div>
+      }
+
+      <div class="acciones">
+        <button type="submit" class="boton" [disabled]="guardando()" [attr.aria-busy]="guardando()">
+          {{ guardando() ? 'Subiendo…' : 'Subir carga' }}
+        </button>
+        <a class="boton boton--secundario" routerLink="/cargas">Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

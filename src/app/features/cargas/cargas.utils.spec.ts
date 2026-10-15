@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { etiquetaEstadoCarga, etiquetaNivelIngreso, formatearFecha, formatearPeriodo } from './cargas.utils';
+import { esArchivoPermitido, etiquetaEstadoCarga, etiquetaNivelIngreso, extensionDe, formatearFecha, formatearPeriodo, formatearTamano } from './cargas.utils';
 
 describe('formatearFecha', () => {
   it('escribe el mes abreviado', () => {
@@ -51,5 +51,32 @@ describe('etiquetaNivelIngreso', () => {
 
   it('un nivel desconocido muestra solo el numero', () => {
     expect(etiquetaNivelIngreso(9)).toBe('Nivel 9');
+  });
+});
+
+describe('extensionDe y esArchivoPermitido', () => {
+  it('toma la ultima extension en minusculas', () => {
+    expect(extensionDe('Datos.CSV')).toBe('csv');
+    expect(extensionDe('informe.final.pdf')).toBe('pdf');
+  });
+
+  it('sin extension valida devuelve null', () => {
+    expect(extensionDe('sin_extension')).toBeNull();
+    expect(extensionDe('.oculto')).toBeNull();
+    expect(extensionDe('termina.')).toBeNull();
+  });
+
+  it('acepta solo los formatos permitidos', () => {
+    expect(esArchivoPermitido('catastro.csv')).toBe(true);
+    expect(esArchivoPermitido('foto.JPG')).toBe(true);
+    expect(esArchivoPermitido('programa.exe')).toBe(false);
+  });
+});
+
+describe('formatearTamano', () => {
+  it('usa bytes, KB y MB', () => {
+    expect(formatearTamano(500)).toBe('500 B');
+    expect(formatearTamano(2048)).toBe('2,0 KB');
+    expect(formatearTamano(5 * 1024 * 1024)).toBe('5,0 MB');
   });
 });

@@ -1,0 +1,155 @@
+<section class="pagina">
+  <a class="volver" routerLink="/cargas">
+    <app-icon name="arrow-left" [size]="18" />
+    Cargas
+  </a>
+
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando carga…</p>
+  } @else if (error(); as mensaje) {
+    <div class="aviso aviso--error" role="alert">
+      <p>{{ mensaje }}</p>
+      <a class="boton" routerLink="/cargas">Volver a Cargas</a>
+    </div>
+  } @else if (detalle(); as d) {
+    <header class="cabecera">
+      <p class="eyebrow"><span></span>Carga #{{ d.carga.id }}</p>
+      <h1 class="titulo">{{ tituloFuente() }}</h1>
+      <div>
+        <span class="insignia" [attr.data-estado]="d.carga.estado">{{ etiquetaEstado(d.carga.estado) }}</span>
+      </div>
+    </header>
+
+    @if (aviso(); as mensaje) {
+      <div class="aviso aviso--ok" role="status"><p>{{ mensaje }}</p></div>
+    }
+
+    <section class="tarjeta" aria-labelledby="titulo-resumen">
+      <span class="tarjeta__franja" aria-hidden="true"></span>
+      <h2 class="tarjeta__titulo" id="titulo-resumen">Resumen</h2>
+      <dl class="datos">
+        <div>
+          <dt>Período</dt>
+          <dd>{{ periodo(d.carga.periodoDesde, d.carga.periodoHasta) }}</dd>
+        </div>
+        <div>
+          <dt>Nivel de ingreso</dt>
+          <dd>{{ etiquetaNivel(d.carga.nivelIngreso) }}</dd>
+        </div>
+        <div>
+          <dt>Registrada</dt>
+          <dd>{{ fechaHora(d.carga.creadaEn) }}</dd>
+        </div>
+        <div>
+          <dt>Última actualización</dt>
+          <dd>{{ fechaHora(d.carga.actualizadaEn) }}</dd>
+        </div>
+        @if (d.carga.descripcion) {
+          <div class="datos__ancho">
+            <dt>Descripción</dt>
+            <dd>{{ d.carga.descripcion }}</dd>
+          </div>
+        }
+        @if (d.carga.estado === 'rechazada' && d.carga.motivoRechazo) {
+          <div class="datos__ancho datos__motivo">
+            <dt>Motivo del rechazo</dt>
+            <dd>{{ d.carga.motivoRechazo }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-archivos">
+      <span class="tarjeta__franja" aria-hidden="true"></span>
+      <h2 class="tarjeta__titulo" id="titulo-archivos">Archivos originales</h2>
+
+      @if (d.archivos.length === 0) {
+        <p class="vacio">Esta carga aún no tiene archivos.</p>
+      } @else {
+        <ul class="archivos">
+          @for (a of d.archivos; track a.id) {
+            <li class="archivo">
+              <div class="archivo__info">
+                <p class="archivo__nombre">{{ a.nombreOriginal }}</p>
+                <p class="archivo__meta">
+                  <span class="etiqueta" [class.etiqueta--vigente]="a.vigente">{{ a.vigente ? 'Vigente' : 'Anterior' }}</span>
+                  Versión {{ a.version }} · {{ tamano(a.tamanoBytes) }} · {{ fechaHora(a.creadoEn) }}
+                </p>
+                <p class="archivo__huella"><span>SHA-256</span> <code>{{ a.sha256 }}</code></p>
+              </div>
+              <button
+                type="button"
+                class="boton boton--secundario"
+                [disabled]="descargandoId() !== null"
+                [attr.aria-busy]="descargandoId() === a.id"
+                [attr.aria-label]="'Descargar ' + a.nombreOriginal"
+                (click)="descargar(a)"
+              >
+                {{ descargandoId() === a.id ? 'Descargando…' : 'Descargar' }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (errorDescarga(); as mensaje) {
+        <p class="error" role="alert"><app-icon name="alert" [size]="15" />{{ mensaje }}</p>
+      }
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-metadatos">
+      <span class="tarjeta__franja" aria-hidden="true"></span>
+      <h2 class="tarjeta__titulo" id="titulo-metadatos">Metadatos</h2>
+      @if (d.metadatos.length === 0) {
+        <p class="vacio">Esta carga no tiene metadatos.</p>
+      } @else {
+        <dl class="datos">
+          @for (m of d.metadatos; track m.clave) {
+            <div>
+              <dt>{{ m.clave }}</dt>
+              <dd>{{ m.valor }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </section>
+
+    @if (puedeRechazar()) {
+      <section class="tarjeta" aria-labelledby="titulo-rechazo">
+        <span class="tarjeta__franja" aria-hidden="true"></span>
+        <h2 class="tarjeta__titulo" id="titulo-rechazo">Rechazar esta carga</h2>
+        <p class="ayuda">
+          Una carga rechazada no vuelve a abrirse desde la plataforma, pero su archivo original se conserva.
+        </p>
+
+        @if (rechazando()) {
+          <app-field
+            fieldId="motivo-rechazo"
+            label="Motivo del rechazo"
+            [sinIcono]="true"
+            [lineas]="3"
+            placeholder="Por qué se rechaza esta carga"
+            [control]="motivo"
+            [mensajes]="mensajesMotivo"
+          />
+          @if (errorRechazo(); as mensaje) {
+            <div class="aviso aviso--error" role="alert">
+              <app-icon name="alert" [size]="18" />
+              <p>{{ mensaje }}</p>
+            </div>
+          }
+          <div class="acciones">
+            <button type="button" class="boton boton--peligro" [disabled]="guardando()" [attr.aria-busy]="guardando()" (click)="confirmarRechazo()">
+              {{ guardando() ? 'Rechazando…' : 'Confirmar rechazo' }}
+            </button>
+            <button type="button" class="boton boton--secundario" [disabled]="guardando()" (click)="cancelarRechazo()">Cancelar</button>
+          </div>
+        } @else {
+          <div class="acciones">
+            <button type="button" class="boton boton--peligro-suave" (click)="abrirRechazo()">Rechazar carga</button>
+          </div>
+        }
+      </section>
+    }
+  }
+</section>

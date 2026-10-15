@@ -128,7 +128,7 @@ export class FieldComponent {
     readonly control = input.required<FormControl<string>>();
     readonly fieldId = input.required<string>();
     readonly label = input.required<string>();
-    readonly type = input<'text' | 'email' | 'password'>('text');
+    readonly type = input<'text' | 'email' | 'password' | 'date'>('text');
     readonly icon = input<IconName>('mail');
     readonly placeholder = input('');
     readonly autocomplete = input<string>();

@@ -56,3 +56,12 @@ export interface FiltroCargas {
   pagina?: number | undefined;
   limite?: number | undefined;
 }
+
+/** Lo que se envia al crear una carga. El nivel de ingreso no se envia: toda carga nueva empieza en 1. */
+export interface DatosNuevaCarga {
+  fuenteId: number;
+  descripcion?: string | undefined;
+  periodoDesde?: string | undefined;
+  periodoHasta?: string | undefined;
+  metadatos?: Record<string, string> | undefined;
+}
