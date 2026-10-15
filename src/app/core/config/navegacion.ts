@@ -11,10 +11,16 @@ export interface ItemMenu {
 
 /**
  * Entradas del menu lateral. Se agregan aqui a medida que existe cada pantalla
- * (Fuentes, Cargas y Usuarios llegan en los siguientes pasos).
+ * (Cargas y Usuarios llegan en los siguientes pasos).
  */
 export const MENU: readonly ItemMenu[] = [
   { etiqueta: 'Inicio', ruta: '/home', icono: 'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10' },
+  {
+    etiqueta: 'Fuentes',
+    ruta: '/fuentes',
+    icono: 'M4 5c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6',
+    roles: ROLES_CONSULTA,
+  },
 ];
 
 /** Entradas del menu que puede ver un rol. Un rol desconocido solo ve las entradas sin restriccion. */

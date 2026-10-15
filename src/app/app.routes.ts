@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from '@app/core/guards/auth.guard';
+import { rolGuard } from '@app/core/guards/roles.guard';
+import { ROLES_CONSULTA } from '@app/core/config/roles';
 
 const MARCA = 'Observatorio Turístico Sostenible';
 
@@ -49,6 +51,13 @@ export const routes: Routes = [
         path: 'home',
         title: `Inicio · ${MARCA}`,
         loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+      },
+      {
+        path: 'fuentes',
+        canActivate: [rolGuard(...ROLES_CONSULTA)],
+        title: `Fuentes · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/fuentes/fuentes-lista/fuentes-lista.page').then((m) => m.FuentesListaPage),
       },
     ],
   },

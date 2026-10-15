@@ -1,0 +1,88 @@
+<section class="fuentes">
+  <header class="cabecera">
+    <p class="eyebrow"><span></span>Fuentes</p>
+    <h1 class="titulo">De dónde viene <em>la información</em></h1>
+    <p class="texto">
+      Cada fuente se registra con su institución, su procedencia y la forma en que se obtiene, para saber siempre
+      el origen de cada dato.
+    </p>
+  </header>
+
+  <div class="herramientas">
+    <div class="buscador">
+      <label class="buscador__etiqueta" for="buscar-fuente">Buscar fuente</label>
+      <input
+        id="buscar-fuente"
+        class="buscador__campo"
+        type="search"
+        placeholder="Nombre, institución o código"
+        autocomplete="off"
+        [value]="texto()"
+        (input)="alBuscar($event)"
+      />
+    </div>
+
+    <div class="filtros" role="group" aria-label="Filtrar por estado">
+      @for (f of filtros; track f.valor) {
+        <button
+          type="button"
+          class="filtro"
+          [class.filtro--activo]="estado() === f.valor"
+          [attr.aria-pressed]="estado() === f.valor"
+          (click)="estado.set(f.valor)"
+        >
+          {{ f.etiqueta }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div aria-live="polite">
+    @if (cargando()) {
+      <p class="aviso" role="status">Cargando fuentes…</p>
+    } @else if (error(); as mensaje) {
+      <div class="aviso aviso--error" role="alert">
+        <p>{{ mensaje }}</p>
+        <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else if (fuentes().length === 0) {
+      <p class="aviso">Aún no hay fuentes registradas.</p>
+    } @else if (visibles().length === 0) {
+      <div class="aviso">
+        <p>Ninguna fuente coincide con la búsqueda.</p>
+        <button type="button" class="boton" (click)="quitarFiltros()">Quitar filtros</button>
+      </div>
+    } @else {
+      <ul class="rejilla">
+        @for (f of visibles(); track f.id) {
+          <li class="fuente">
+            <span class="fuente__franja" aria-hidden="true"></span>
+            <div class="fuente__arriba">
+              <span class="insignia" [class.insignia--activa]="f.estado === 'activa'">{{ etiquetaEstado(f.estado) }}</span>
+              <span class="fuente__codigo">{{ f.codigo }}</span>
+            </div>
+            <h2 class="fuente__nombre">{{ f.nombre }}</h2>
+            <p class="fuente__institucion">{{ f.institucion }}</p>
+            @if (f.descripcion) {
+              <p class="fuente__descripcion">{{ f.descripcion }}</p>
+            }
+            <dl class="fuente__datos">
+              <div>
+                <dt>Tipo</dt>
+                <dd>{{ f.tipoFuente || 'Sin definir' }}</dd>
+              </div>
+              <div>
+                <dt>Acceso</dt>
+                <dd>{{ f.mecanismoAcceso || 'Sin definir' }}</dd>
+              </div>
+              <div>
+                <dt>Actualización</dt>
+                <dd>{{ f.frecuenciaActualizacion || 'Sin definir' }}</dd>
+              </div>
+            </dl>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>
