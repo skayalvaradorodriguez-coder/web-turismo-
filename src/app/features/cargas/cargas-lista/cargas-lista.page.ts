@@ -5,7 +5,7 @@ import type { Fuente } from '@app/core/models/fuente.models';
 import { CargasService } from '@app/core/services/cargas.service';
 import { FuentesService } from '@app/core/services/fuentes.service';
 import { mensajeApi } from '@app/shared/utils/api-error';
-import { ESTADOS_CARGA, etiquetaEstadoCarga, formatearPeriodo } from '../cargas.utils';
+import { ESTADOS_CARGA, etiquetaEstadoCarga, etiquetaNivelIngreso, formatearPeriodo } from '../cargas.utils';
 
 @Component({
   selector: 'app-cargas-lista',
@@ -108,6 +108,10 @@ export class CargasListaPage implements OnInit {
 
   protected etiquetaEstado(estado: EstadoCarga): string {
     return etiquetaEstadoCarga(estado);
+  }
+
+  protected etiquetaNivel(nivel: number): string {
+    return etiquetaNivelIngreso(nivel);
   }
 
   protected periodo(carga: Carga): string {

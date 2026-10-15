@@ -31,3 +31,15 @@ export function formatearPeriodo(desde: string | null, hasta: string | null): st
   if (hasta) return `Hasta ${formatearFecha(hasta)}`;
   return 'Sin período';
 }
+
+/** Hasta donde ha llegado el dato: 1 guardada y catalogada, 2 procesada, 3 integrada. */
+const NIVELES_INGRESO: Record<number, string> = {
+  1: 'Guardada y catalogada',
+  2: 'Procesada',
+  3: 'Integrada',
+};
+
+export function etiquetaNivelIngreso(nivel: number): string {
+  const nombre = NIVELES_INGRESO[nivel];
+  return nombre ? `Nivel ${nivel} · ${nombre}` : `Nivel ${nivel}`;
+}

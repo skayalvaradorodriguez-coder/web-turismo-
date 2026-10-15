@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { etiquetaEstadoCarga, formatearFecha, formatearPeriodo } from './cargas.utils';
+import { etiquetaEstadoCarga, etiquetaNivelIngreso, formatearFecha, formatearPeriodo } from './cargas.utils';
 
 describe('formatearFecha', () => {
   it('escribe el mes abreviado', () => {
@@ -40,5 +40,16 @@ describe('formatearPeriodo', () => {
 describe('etiquetaEstadoCarga', () => {
   it('devuelve el texto para la persona', () => {
     expect(etiquetaEstadoCarga('rechazada')).toBe('Rechazada');
+  });
+});
+
+describe('etiquetaNivelIngreso', () => {
+  it('muestra el nombre del nivel', () => {
+    expect(etiquetaNivelIngreso(1)).toBe('Nivel 1 · Guardada y catalogada');
+    expect(etiquetaNivelIngreso(3)).toBe('Nivel 3 · Integrada');
+  });
+
+  it('un nivel desconocido muestra solo el numero', () => {
+    expect(etiquetaNivelIngreso(9)).toBe('Nivel 9');
   });
 });
