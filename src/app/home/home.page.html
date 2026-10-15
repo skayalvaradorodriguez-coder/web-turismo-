@@ -1,14 +1,10 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Web Turismo</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  @if (usuario(); as u) {
-  <h2>Hola, {{ u.nombres }}</h2>
-  <p>{{ u.email }} · Rol: {{ u.rol }}</p>
-  <p>Página temporal protegida: solo se ve con la sesión iniciada.</p>
-  <button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
-  }
-</ion-content>
+@if (usuario(); as u) {
+  <section class="inicio">
+    <p class="inicio__eyebrow"><span></span>Santa Elena</p>
+    <h1 class="inicio__titulo">Hola, <em>{{ u.nombres }}</em></h1>
+    <p class="inicio__texto">
+      Esta es tu página de inicio. Aquí irán el resumen de cargas y las cifras de las fuentes a medida que
+      construyamos cada módulo.
+    </p>
+  </section>
+}

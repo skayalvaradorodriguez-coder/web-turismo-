@@ -41,10 +41,16 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'home',
+    path: '',
     canActivate: [authGuard],
-    title: `Inicio · ${MARCA}`,
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+    loadComponent: () => import('./layouts/main-shell/main-shell.component').then((m) => m.MainShellComponent),
+    children: [
+      {
+        path: 'home',
+        title: `Inicio · ${MARCA}`,
+        loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+      },
+    ],
   },
   { path: '**', redirectTo: 'home' },
 ];

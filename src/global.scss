@@ -43,3 +43,17 @@
 /* Sistema de diseno del Observatorio */
 @import 'theme/tokens.scss';
 @import 'theme/auth.scss';
+
+/*
+ * Pantalla principal de cada ruta (marco de acceso o cascaron). Antes la daba ion-router-outlet
+ * con la clase "ion-page"; ahora la ruta es de Angular y ocupa toda la ventana con esta regla.
+ */
+ion-app > router-outlet + * {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  contain: layout size style;
+  overflow: hidden;
+  z-index: 0;
+}
