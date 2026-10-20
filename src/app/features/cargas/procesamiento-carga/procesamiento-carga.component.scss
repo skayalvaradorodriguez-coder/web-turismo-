@@ -1,0 +1,200 @@
+:host {
+  display: block;
+}
+
+.tarjeta {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px clamp(18px, 4vw, 30px) 24px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.tarjeta__franja {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--sun));
+}
+
+.tarjeta__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.subtitulo {
+  margin: 8px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ayuda,
+.vacio {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1.5px solid var(--primary);
+  border-radius: 14px;
+  background: var(--primary);
+  color: var(--primary-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton--secundario {
+  background: transparent;
+  color: var(--primary);
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.aviso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 16px;
+  color: var(--ink-soft);
+
+  p {
+    margin: 0;
+  }
+}
+
+.aviso--error {
+  border-style: solid;
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.aviso--ok {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--line));
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  color: var(--ink);
+}
+
+.confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: var(--surface-2);
+
+  p {
+    margin: 0;
+    color: var(--ink);
+  }
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.historial {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ejecucion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+
+.ejecucion__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  color: var(--ink);
+}
+
+.ejecucion__fecha {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.ejecucion__cifras {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.cifra--error {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.chip {
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--bg-accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chip[data-estado='completado'] {
+  background: color-mix(in srgb, var(--primary) 18%, var(--surface));
+  color: var(--primary);
+}
+
+.chip[data-estado='en_curso'] {
+  background: color-mix(in srgb, var(--sun) 25%, var(--surface));
+}
+
+.chip[data-estado='fallido'] {
+  background: var(--danger-bg);
+  color: var(--danger);
+}

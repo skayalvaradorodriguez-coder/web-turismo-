@@ -1,0 +1,90 @@
+<section class="tarjeta" aria-labelledby="titulo-procesamiento">
+  <span class="tarjeta__franja" aria-hidden="true"></span>
+  <h2 class="tarjeta__titulo" id="titulo-procesamiento">Procesamiento</h2>
+
+  @if (!disponible()) {
+    <p class="aviso" role="status">
+      <app-icon name="info" [size]="18" />
+      Esta fuente todavía no tiene un procesamiento disponible. Su archivo original queda guardado y catalogado.
+    </p>
+  } @else {
+    <p class="ayuda">
+      Validar revisa el archivo sin guardar nada. Procesar guarda los registros en la plataforma y hace avanzar la carga.
+    </p>
+
+    @if (resultado(); as mensaje) {
+      <div class="aviso aviso--ok" role="status"><p>{{ mensaje }}</p></div>
+    }
+    @if (errorAccion(); as mensaje) {
+      <div class="aviso aviso--error" role="alert">
+        <app-icon name="alert" [size]="18" />
+        <p>{{ mensaje }}</p>
+      </div>
+    }
+
+    @if (puedeValidar()) {
+      @if (confirmando()) {
+        <div class="confirmacion" role="group" aria-label="Confirmar procesamiento">
+          <p>¿Procesar esta carga? Se guardarán los registros y la carga pasará a procesada. No se puede deshacer.</p>
+          <div class="acciones">
+            <button type="button" class="boton" (click)="procesar()">Sí, procesar</button>
+            <button type="button" class="boton boton--secundario" (click)="cancelar()">Cancelar</button>
+          </div>
+        </div>
+      } @else {
+        <div class="acciones">
+          <button
+            type="button"
+            class="boton"
+            [class.boton--secundario]="puedeProcesar()"
+            [disabled]="ejecutando() !== null"
+            [attr.aria-busy]="ejecutando() === 'validar'"
+            (click)="validar()"
+          >
+            {{ textoValidar() }}
+          </button>
+          @if (puedeProcesar()) {
+            <button
+              type="button"
+              class="boton"
+              [disabled]="ejecutando() !== null"
+              [attr.aria-busy]="ejecutando() === 'procesar'"
+              (click)="pedirConfirmacion()"
+            >
+              {{ ejecutando() === 'procesar' ? 'Procesando…' : 'Procesar' }}
+            </button>
+          }
+        </div>
+      }
+    }
+
+    <h3 class="subtitulo">Historial</h3>
+    @if (cargandoLista()) {
+      <p class="vacio" role="status">Cargando historial…</p>
+    } @else if (errorLista(); as mensaje) {
+      <p class="error" role="alert"><app-icon name="alert" [size]="15" />{{ mensaje }}</p>
+    } @else if (historial().length === 0) {
+      <p class="vacio">Esta carga aún no se ha validado ni procesado.</p>
+    } @else {
+      <ul class="historial">
+        @for (p of historial(); track p.id) {
+          <li class="ejecucion">
+            <div class="ejecucion__cabecera">
+              <strong>{{ etiquetaTipo(p.tipo) }}</strong>
+              <span class="chip" [attr.data-estado]="p.estado">{{ etiquetaEstado(p.estado) }}</span>
+              <span class="ejecucion__fecha">{{ fechaHora(p.iniciadoEn) }}</span>
+            </div>
+            <p class="ejecucion__cifras">
+              {{ conteo(p.totalFilas, 'fila', 'filas') }} ·
+              <span [class.cifra--error]="p.totalErrores > 0">{{ conteo(p.totalErrores, 'error', 'errores') }}</span> ·
+              {{ conteo(p.totalAlertas, 'alerta', 'alertas') }}
+            </p>
+            @if (p.mensajeError) {
+              <p class="error"><app-icon name="alert" [size]="15" />{{ p.mensajeError }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

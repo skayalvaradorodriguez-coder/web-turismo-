@@ -97,6 +97,16 @@
       }
     </section>
 
+    @if (codigoFuente() !== null) {
+      <app-procesamiento-carga
+        [cargaId]="d.carga.id"
+        [estado]="d.carga.estado"
+        [esGestion]="esGestion()"
+        [disponible]="esCatastro()"
+        (cambio)="recargar()"
+      />
+    }
+
     <section class="tarjeta" aria-labelledby="titulo-metadatos">
       <span class="tarjeta__franja" aria-hidden="true"></span>
       <h2 class="tarjeta__titulo" id="titulo-metadatos">Metadatos</h2>
