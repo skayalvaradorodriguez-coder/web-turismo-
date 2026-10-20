@@ -6,6 +6,7 @@ import type { Procesamiento, ResultadoProcesamiento } from '@app/core/models/pro
 import { ProcesamientoService } from '@app/core/services/procesamiento.service';
 import { IconComponent } from '@app/shared/components/icon/icon.component';
 import { mensajeApi } from '@app/shared/utils/api-error';
+import { HallazgosProcesamientoComponent } from '../hallazgos-procesamiento/hallazgos-procesamiento.component';
 import {
   etiquetaEstadoProcesamiento,
   etiquetaTipoProcesamiento,
@@ -18,7 +19,7 @@ type Accion = 'validar' | 'procesar';
 
 @Component({
   selector: 'app-procesamiento-carga',
-  imports: [IconComponent],
+  imports: [IconComponent, HallazgosProcesamientoComponent],
   templateUrl: './procesamiento-carga.component.html',
   styleUrl: './procesamiento-carga.component.scss',
 })
@@ -41,6 +42,8 @@ export class ProcesamientoCargaComponent implements OnInit {
   protected readonly confirmando = signal(false);
   protected readonly errorAccion = signal<string | null>(null);
   protected readonly resultado = signal<string | null>(null);
+  /** Id de la ejecucion cuyos hallazgos estan a la vista. */
+  protected readonly abierto = signal<number | null>(null);
 
   protected readonly historial = computed(() => [...this.procesamientos()].sort((a, b) => b.id - a.id));
   /** La API acepta validar cargas recibidas o ya validadas. */
@@ -66,6 +69,14 @@ export class ProcesamientoCargaComponent implements OnInit {
 
   protected validar(): void {
     this.ejecutar('validar', this.api.validar(this.cargaId()));
+  }
+
+  protected alternarHallazgos(procesamiento: Procesamiento): void {
+    this.abierto.set(this.abierto() === procesamiento.id ? null : procesamiento.id);
+  }
+
+  protected tieneHallazgos(procesamiento: Procesamiento): boolean {
+    return procesamiento.totalErrores + procesamiento.totalAlertas > 0;
   }
 
   protected pedirConfirmacion(): void {

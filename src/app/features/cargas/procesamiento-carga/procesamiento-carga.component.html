@@ -82,6 +82,14 @@
             @if (p.mensajeError) {
               <p class="error"><app-icon name="alert" [size]="15" />{{ p.mensajeError }}</p>
             }
+            @if (tieneHallazgos(p)) {
+              <button type="button" class="enlace" [attr.aria-expanded]="abierto() === p.id" (click)="alternarHallazgos(p)">
+                {{ abierto() === p.id ? 'Ocultar hallazgos' : 'Ver hallazgos' }}
+              </button>
+              @if (abierto() === p.id) {
+                <app-hallazgos-procesamiento [cargaId]="cargaId()" [procesamientoId]="p.id" />
+              }
+            }
           </li>
         }
       </ul>

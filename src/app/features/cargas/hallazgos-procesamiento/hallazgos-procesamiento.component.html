@@ -1,0 +1,63 @@
+<div class="hallazgos">
+  <div class="filtros" role="group" aria-label="Filtrar hallazgos">
+    @for (f of filtros; track f.texto) {
+      <button type="button" class="filtro" [attr.aria-pressed]="filtro() === f.valor" (click)="elegirFiltro(f.valor)">
+        {{ f.texto }}
+      </button>
+    }
+  </div>
+
+  @if (datos(); as d) {
+    @if (d.resumen.length > 0) {
+      <ul class="resumen" aria-label="Resumen por regla">
+        @for (r of d.resumen; track r.regla + r.severidad) {
+          <li class="resumen__item" [attr.data-severidad]="r.severidad">
+            <span>{{ nombreRegla(r.regla) }}</span>
+            <strong>{{ r.total }}</strong>
+          </li>
+        }
+      </ul>
+    }
+  }
+
+  @if (cargando()) {
+    <p class="vacio" role="status">Cargando hallazgos…</p>
+  } @else if (error(); as mensaje) {
+    <p class="error" role="alert"><app-icon name="alert" [size]="15" />{{ mensaje }}</p>
+  } @else if (datos(); as d) {
+    @if (d.hallazgos.length === 0) {
+      <p class="vacio">No hay hallazgos con este filtro.</p>
+    } @else {
+      <ul class="lista">
+        @for (h of d.hallazgos; track h.id) {
+          <li class="hallazgo" [attr.data-severidad]="h.severidad">
+            <div class="hallazgo__cabecera">
+              <span class="chip" [attr.data-severidad]="h.severidad">{{ etiquetaSeveridad(h.severidad) }}</span>
+              <span class="hallazgo__lugar">{{ ubicacion(h) }}</span>
+              <span class="hallazgo__regla">{{ nombreRegla(h.regla) }}</span>
+            </div>
+            <p class="hallazgo__mensaje">{{ h.mensaje }}</p>
+            @if (h.valorOriginal !== null || h.valorCorregido !== null) {
+              <p class="hallazgo__valores">
+                @if (h.valorOriginal !== null) {
+                  <span>Original: <code>{{ valor(h.valorOriginal) }}</code></span>
+                }
+                @if (h.valorCorregido !== null) {
+                  <span>Corregido: <code>{{ valor(h.valorCorregido) }}</code></span>
+                }
+              </p>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (totalPaginas() > 1) {
+        <nav class="paginas" aria-label="Paginación de hallazgos">
+          <button type="button" class="filtro" [disabled]="pagina() <= 1" (click)="irAPagina(pagina() - 1)">Anterior</button>
+          <span>Página {{ pagina() }} de {{ totalPaginas() }} · {{ conteo(d.total, 'hallazgo', 'hallazgos') }}</span>
+          <button type="button" class="filtro" [disabled]="pagina() >= totalPaginas()" (click)="irAPagina(pagina() + 1)">Siguiente</button>
+        </nav>
+      }
+    }
+  }
+</div>

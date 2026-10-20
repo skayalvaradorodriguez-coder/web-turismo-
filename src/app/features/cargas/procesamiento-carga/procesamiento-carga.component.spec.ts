@@ -20,7 +20,7 @@ const resultadoDe = (cambios: Partial<Procesamiento> = {}): ResultadoProcesamien
 });
 
 describe('ProcesamientoCargaComponent', () => {
-  const api = { listar: vi.fn(), validar: vi.fn(), procesar: vi.fn() };
+  const api = { listar: vi.fn(), validar: vi.fn(), procesar: vi.fn(), hallazgos: vi.fn() };
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -64,7 +64,7 @@ describe('ProcesamientoCargaComponent', () => {
     api.listar.mockReturnValue(of([ejecucion()]));
     const f = crear('procesada');
 
-    expect(textos(f)).toEqual([]);
+    expect(textos(f)).toEqual(['Ver hallazgos']); // ninguna acción, solo el acceso a los hallazgos
     expect(contenido(f)).toContain('Validación');
     expect(contenido(f)).toContain('2 filas');
   });
@@ -132,5 +132,27 @@ describe('ProcesamientoCargaComponent', () => {
 
     expect(contenido(f)).toContain('La validacion esta desactualizada');
     expect(avisos).not.toHaveBeenCalled();
+  });
+
+  it('ver hallazgos abre el detalle de esa ejecución y volver a pulsar lo oculta', () => {
+    api.listar.mockReturnValue(of([ejecucion({ id: 5, totalErrores: 1 })]));
+    api.hallazgos.mockReturnValue(of({ hallazgos: [], total: 0, resumen: [], pagina: 1, limite: 25 }));
+    const f = crear('recibida', { gestion: false });
+    const abierto = () => (f.nativeElement as HTMLElement).querySelector('app-hallazgos-procesamiento');
+
+    boton(f, 'Ver hallazgos')?.click();
+    f.detectChanges();
+    expect(api.hallazgos).toHaveBeenCalledWith(10, 5, expect.objectContaining({ pagina: 1 }));
+    expect(abierto()).not.toBeNull();
+
+    boton(f, 'Ocultar hallazgos')?.click();
+    f.detectChanges();
+    expect(abierto()).toBeNull();
+  });
+
+  it('una ejecución sin errores ni alertas no ofrece hallazgos', () => {
+    api.listar.mockReturnValue(of([ejecucion({ totalAlertas: 0 })]));
+
+    expect(textos(crear('procesada'))).toEqual([]);
   });
 });

@@ -198,3 +198,21 @@
   background: var(--danger-bg);
   color: var(--danger);
 }
+
+.enlace {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.enlace:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
