@@ -1,0 +1,137 @@
+<section class="pagina">
+  <header class="cabecera">
+    <p class="eyebrow"><span></span>Gestión</p>
+    <h1 class="titulo">Usuarios</h1>
+    <p class="ayuda">
+      Aquí cambias el rol de cada cuenta o la desactivas. Los cambios valen de inmediato y quedan en la bitácora.
+      Las cuentas nuevas se crean cuando la persona se registra, y entran como Externo.
+    </p>
+  </header>
+
+  <form class="filtros" (submit)="buscar($event)">
+    <label class="campo" for="filtro-texto">
+      Buscar
+      <input id="filtro-texto" type="search" [formControl]="texto" placeholder="Nombre o correo" autocomplete="off" />
+    </label>
+    <label class="campo" for="filtro-rol">
+      Rol
+      <select id="filtro-rol" [value]="filtroRol()" (change)="elegirRolFiltro(valor($event))">
+        <option value="">Todos</option>
+        <option value="super_admin">Super administrador</option>
+        <option value="admin">Administrador</option>
+        <option value="investigador">Investigador</option>
+        <option value="externo">Externo</option>
+      </select>
+    </label>
+    <label class="campo" for="filtro-estado">
+      Estado
+      <select id="filtro-estado" [value]="filtroEstado()" (change)="elegirEstadoFiltro(valor($event))">
+        <option value="">Todos</option>
+        <option value="activa">Activas</option>
+        <option value="inactiva">Inactivas</option>
+      </select>
+    </label>
+    <button type="submit" class="boton">Buscar</button>
+  </form>
+
+  @if (aviso(); as mensaje) {
+    <div class="aviso aviso--ok" role="status"><p>{{ mensaje }}</p></div>
+  }
+
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando usuarios…</p>
+  } @else if (error(); as mensaje) {
+    <div class="aviso aviso--error" role="alert">
+      <app-icon name="alert" [size]="18" />
+      <p>{{ mensaje }}</p>
+      <button type="button" class="boton boton--secundario" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else if (usuarios().length === 0) {
+    <p class="aviso">No hay cuentas con estos filtros.</p>
+  } @else {
+    <ul class="lista">
+      @for (u of usuarios(); track u.id) {
+        @let permiso = permisos(u);
+        <li class="usuario">
+          <div class="usuario__info">
+            <p class="usuario__nombre">{{ nombre(u) }}</p>
+            <p class="usuario__correo">{{ u.email }}</p>
+            <p class="usuario__meta">
+              <span class="chip">{{ rol(u.rol) }}</span>
+              <span class="chip" [class.chip--inactiva]="!u.activo">{{ estado(u.activo) }}</span>
+              @if (!u.emailVerificado) {
+                <span class="chip chip--aviso">Correo sin verificar</span>
+              }
+            </p>
+            <p class="usuario__acceso">{{ acceso(u.ultimoLoginEn) }}</p>
+          </div>
+
+          @if (permiso.rolesDisponibles.length > 0 || permiso.puedeCambiarEstado) {
+            <div class="usuario__acciones">
+              @if (editandoRolId() === u.id) {
+                <select
+                  class="usuario__select"
+                  [attr.aria-label]="'Nuevo rol para ' + nombre(u)"
+                  [value]="rolElegido()"
+                  (change)="elegirRol(valor($event))"
+                >
+                  <option value="">Elige un rol</option>
+                  @for (r of permiso.rolesDisponibles; track r) {
+                    <option [value]="r">{{ rol(r) }}</option>
+                  }
+                </select>
+                <button type="button" class="boton" [disabled]="rolElegido() === '' || trabajandoId() !== null" (click)="guardarRol(u)">
+                  Guardar
+                </button>
+                <button type="button" class="boton boton--secundario" [disabled]="trabajandoId() !== null" (click)="cancelarRol()">
+                  Cancelar
+                </button>
+              } @else if (confirmandoId() === u.id) {
+                <p class="confirmacion">
+                  ¿Desactivar esta cuenta? Se cerrarán sus sesiones y no podrá entrar hasta que la actives de nuevo.
+                </p>
+                <button type="button" class="boton boton--peligro" [disabled]="trabajandoId() !== null" (click)="cambiarEstado(u, 'inactiva')">
+                  Sí, desactivar
+                </button>
+                <button type="button" class="boton boton--secundario" [disabled]="trabajandoId() !== null" (click)="cancelarConfirmacion()">
+                  Cancelar
+                </button>
+              } @else {
+                @if (permiso.rolesDisponibles.length > 0) {
+                  <button type="button" class="boton boton--secundario" [disabled]="trabajandoId() !== null" (click)="abrirRol(u)">
+                    Cambiar rol
+                  </button>
+                }
+                @if (permiso.puedeCambiarEstado) {
+                  @if (u.activo) {
+                    <button type="button" class="boton boton--peligro-suave" [disabled]="trabajandoId() !== null" (click)="pedirDesactivar(u)">
+                      Desactivar
+                    </button>
+                  } @else {
+                    <button type="button" class="boton boton--secundario" [disabled]="trabajandoId() !== null" (click)="cambiarEstado(u, 'activa')">
+                      Activar
+                    </button>
+                  }
+                }
+              }
+            </div>
+          }
+
+          @if (errorAccion(); as problema) {
+            @if (problema.id === u.id) {
+              <p class="error" role="alert"><app-icon name="alert" [size]="15" />{{ problema.mensaje }}</p>
+            }
+          }
+        </li>
+      }
+    </ul>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginas" aria-label="Paginación de usuarios">
+        <button type="button" class="boton boton--secundario" [disabled]="pagina() <= 1" (click)="irAPagina(pagina() - 1)">Anterior</button>
+        <span>Página {{ pagina() }} de {{ totalPaginas() }} · {{ total() }} cuentas</span>
+        <button type="button" class="boton boton--secundario" [disabled]="pagina() >= totalPaginas()" (click)="irAPagina(pagina() + 1)">Siguiente</button>
+      </nav>
+    }
+  }
+</section>

@@ -81,6 +81,13 @@ export const routes: Routes = [
           import('./features/cargas/carga-detalle/carga-detalle.page').then((m) => m.CargaDetallePage),
       },
       {
+        path: 'usuarios',
+        canActivate: [rolGuard(...ROLES_GESTION)],
+        title: `Usuarios · ${MARCA}`,
+        loadComponent: () =>
+          import('./features/usuarios/usuarios-lista/usuarios-lista.page').then((m) => m.UsuariosListaPage),
+      },
+      {
         path: 'fuentes/nueva',
         canActivate: [rolGuard(...ROLES_GESTION)],
         title: `Nueva fuente · ${MARCA}`,

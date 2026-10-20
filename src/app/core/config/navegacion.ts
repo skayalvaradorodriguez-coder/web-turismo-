@@ -11,7 +11,7 @@ export interface ItemMenu {
 
 /**
  * Entradas del menu lateral. Se agregan aqui a medida que existe cada pantalla
- * (Usuarios llega en un paso posterior).
+ * Usuarios la ven solo super_admin y admin.
  */
 export const MENU: readonly ItemMenu[] = [
   { etiqueta: 'Inicio', ruta: '/home', icono: 'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10' },
@@ -26,6 +26,12 @@ export const MENU: readonly ItemMenu[] = [
     ruta: '/cargas',
     icono: 'M12 3v12M7 8l5-5 5 5M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4',
     roles: ROLES_CONSULTA,
+  },
+  {
+    etiqueta: 'Usuarios',
+    ruta: '/usuarios',
+    icono: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8',
+    roles: ROLES_GESTION,
   },
 ];
 
